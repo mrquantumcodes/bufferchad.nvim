@@ -2,7 +2,7 @@ local M = {}
 
 
 M.setup = function(keybinding)
-	vim.api.nvim_set_keymap('n', keybinding, '<Cmd>lua OpenBufferListWindow()<CR>', { noremap = true, silent = true })
+	vim.api.nvim_set_keymap('n', keybinding, '<Cmd>lua require"bufferchad.nvim".OpenBufferListWindow()<CR>', { noremap = true, silent = true })
 end
 
 function removePathFromFullPath(fullPath, pathToRemove)
