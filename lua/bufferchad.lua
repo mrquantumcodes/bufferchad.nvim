@@ -70,9 +70,7 @@ M.BufferChadListBuffers = function()
 			buf_names[1] = buf_names[2]
 			buf_names[2] = temp
 		end
-	end
-
-	if sort_order == "ASCENDING" then
+	elseif sort_order == "ASCENDING" then
 		local reversedTable = {}
 		local length = #buf_names
 		for i = length, 1, -1 do
