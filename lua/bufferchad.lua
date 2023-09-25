@@ -76,7 +76,7 @@ M.BufferChadListBuffers = function()
 		local reversedTable = {}
 		local length = #buf_names
 		for i = length, 1, -1 do
-			table.insert(reversedTable, tbl[i])
+			table.insert(reversedTable, buf_names[i])
 		end
 		buf_names = reversedTable
 	end
