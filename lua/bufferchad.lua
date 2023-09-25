@@ -28,7 +28,7 @@ function removePathFromFullPath(fullPath, pathToRemove)
 end
 
 -- Function to open the buffer list window in order of usage with the first and second buffers swapped
-function OpenBufferListWindow()
+function BufferChadListBuffers()
 	-- Use vim.fn.execute to capture the output of ":ls t"
 	local buffer_list = vim.fn.execute("ls t")
   
@@ -81,4 +81,4 @@ function OpenBufferListWindow()
   end
   
   -- Set the keybinding to toggle the buffer list window
-  vim.api.nvim_set_keymap('n', '<leader>bb', '<Cmd>lua OpenBufferListWindow()<CR>', { noremap = true, silent = true })
+--   vim.api.nvim_set_keymap('n', '<leader>bb', '<Cmd>lua OpenBufferListWindow()<CR>', { noremap = true, silent = true })
