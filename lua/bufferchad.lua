@@ -74,7 +74,7 @@ M.BufferChadListBuffers = function()
 
 	if sort_order == "ASCENDING" then
 		local reversedTable = {}
-		local length = #tbl
+		local length = #buf_names
 		for i = length, 1, -1 do
 			table.insert(reversedTable, tbl[i])
 		end
@@ -113,7 +113,7 @@ M.BufferChadListBuffers = function()
 		vim.cmd('buffer ' .. selected)
 	  end
 	end)
-  end
+end
 
 
 -- vim.cmd([[command! BufferChadListBuffers lua BufferChadListBuffers() ]])
