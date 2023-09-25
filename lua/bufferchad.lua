@@ -114,6 +114,7 @@ M.BufferChadListBuffers = function()
 	  end
 	end)
 end
+end
 
 
 -- vim.cmd([[command! BufferChadListBuffers lua BufferChadListBuffers() ]])
