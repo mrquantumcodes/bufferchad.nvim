@@ -1,3 +1,5 @@
+local M = {}
+
 function removePathFromFullPath(fullPath, pathToRemove)
     -- Replace backslashes with forward slashes for platform independence
     fullPath = fullPath:gsub("\\", "/")
@@ -28,7 +30,7 @@ function removePathFromFullPath(fullPath, pathToRemove)
 end
 
 -- Function to open the buffer list window in order of usage with the first and second buffers swapped
-function BufferChadListBuffers()
+M.BufferChadListBuffers = function()
 	-- Use vim.fn.execute to capture the output of ":ls t"
 	local buffer_list = vim.fn.execute("ls t")
   
@@ -84,9 +86,8 @@ function BufferChadListBuffers()
 vim.cmd([[command! BufferChadListBuffers lua BufferChadListBuffers() ]])
 
   
+
   -- Set the keybinding to toggle the buffer list window
 --   vim.api.nvim_set_keymap('n', '<leader>bb', '<Cmd>lua OpenBufferListWindow()<CR>', { noremap = true, silent = true })
 
-return {
-    BufferChadListBuffers = BufferChadListBuffers,
-}
+return M
