@@ -1,5 +1,10 @@
 local M = {}
 
+
+M.setup = function(keybinding) {
+	vim.api.nvim_set_keymap('n', keybinding, '<Cmd>lua OpenBufferListWindow()<CR>', { noremap = true, silent = true })
+}
+
 function removePathFromFullPath(fullPath, pathToRemove)
     -- Replace backslashes with forward slashes for platform independence
     fullPath = fullPath:gsub("\\", "/")
@@ -83,7 +88,7 @@ M.BufferChadListBuffers = function()
   end
 
 
-vim.cmd([[command! BufferChadListBuffers lua BufferChadListBuffers() ]])
+-- vim.cmd([[command! BufferChadListBuffers lua BufferChadListBuffers() ]])
 
   
 
