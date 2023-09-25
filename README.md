@@ -29,7 +29,7 @@ require("bufferchad").setup({
 
 ## Configuration options
 
-Change the mapping to anything you like, I recommend "<leader>bb".
+Change the mapping to anything you like, I recommend "\<leader\>bb".
 
 The order parameter can have the following arguments:
 
