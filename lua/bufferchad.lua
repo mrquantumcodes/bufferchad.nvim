@@ -1,9 +1,9 @@
 local M = {}
 
 
-M.setup = function(keybinding) {
+M.setup = function(keybinding)
 	vim.api.nvim_set_keymap('n', keybinding, '<Cmd>lua OpenBufferListWindow()<CR>', { noremap = true, silent = true })
-}
+end
 
 function removePathFromFullPath(fullPath, pathToRemove)
     -- Replace backslashes with forward slashes for platform independence
