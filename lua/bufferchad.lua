@@ -47,12 +47,12 @@ M.BufferChadListBuffers = function()
 
 	local sort_order = M.opts.order or "LAST_USED_UP"
 
-	local buffer_list
+	local buffer_list = ""
 
 	if sort_order == "LAST_USED_UP" or sort_order == "DESCENDING" then
-		local buffer_list = vim.fn.execute("ls t")
+		buffer_list = vim.fn.execute("ls t")
 	elseif sort_order == "REGULAR" then
-		local buffer_list = vim.fn.execute("ls")
+		buffer_list = vim.fn.execute("ls")
 	end
 
 	-- Split the buffer list into lines
