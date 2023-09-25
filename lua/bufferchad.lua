@@ -8,8 +8,10 @@ M.setup = function(options)
 
 	local keybinding = options.mapping or "<Leader>bb"
 
-	vim.api.nvim_set_keymap('n', keybinding, "",
-		{ noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
+	if keybinding ~= "None" then
+		vim.api.nvim_set_keymap('n', keybinding, "",
+			{ noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
+	end
 end
 
 function removePathFromFullPath(fullPath, pathToRemove)
