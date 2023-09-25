@@ -2,6 +2,8 @@
 
 An simple, customisable Buffer Manager for Neovim that `just works` out of the box
 
+![App Screenshot](https://github.com/mrquantumcodes/bufferchad.nvim/blob/main/demo.gif)
+
 ## Installation and setup
 
 Install using your favourite package manager. Here's how to install BufferChad with `Packer`:
@@ -29,7 +31,7 @@ require("bufferchad").setup({
 
 ## Configuration options
 
-Change the mapping to anything you like, I recommend "\<leader\>bb".
+Change the mapping to anything you like, I recommend "<leader>bb".
 
 The order parameter can have the following arguments:
 
