@@ -2,7 +2,7 @@ local M = {}
 
 
 M.setup = function(keybinding)
-	vim.api.nvim_set_keymap('n', keybinding, { noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
+	vim.api.nvim_set_keymap('n', keybinding, "", { noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
 end
 
 function removePathFromFullPath(fullPath, pathToRemove)
