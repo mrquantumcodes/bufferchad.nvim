@@ -1,7 +1,14 @@
 local M = {}
 
 
-M.setup = function(keybinding)
+M.opts = {}
+
+M.setup = function(options)
+
+	M.opts = options
+
+	local keybinding = options.mapping or "<Leader>bb"
+
 	vim.api.nvim_set_keymap('n', keybinding, "", { noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
 end
 
@@ -37,7 +44,16 @@ end
 -- Function to open the buffer list window in order of usage with the first and second buffers swapped
 M.BufferChadListBuffers = function()
 	-- Use vim.fn.execute to capture the output of ":ls t"
-	local buffer_list = vim.fn.execute("ls t")
+
+	local sort_order = M.opts.order or "LAST_USED_UP"
+
+	local buffer_list
+
+	if sort_order == "LAST_USED_UP" or sort_order == "DESCENDING" then
+	  local buffer_list = vim.fn.execute("ls t")
+	else if sort_order == "REGULAR" then
+		local buffer_list = vim.fn.execute("ls")
+	end
   
 	-- Split the buffer list into lines
 	local buf_names = vim.split(buffer_list, "\n")
@@ -46,11 +62,23 @@ M.BufferChadListBuffers = function()
 	table.remove(buf_names, 1)
   
 	-- Check if there are at least two buffers
-	if #buf_names >= 2 then
-		-- Swap the first and second buffers
-		local temp = buf_names[1]
-		buf_names[1] = buf_names[2]
-		buf_names[2] = temp
+
+	if sort_order == "LAST_USED_UP" then
+		if #buf_names >= 2 then
+			-- Swap the first and second buffers
+			local temp = buf_names[1]
+			buf_names[1] = buf_names[2]
+			buf_names[2] = temp
+		end
+	end
+
+	if sort_order == "ASCENDING" then
+		local reversedTable = {}
+		local length = #tbl
+		for i = length, 1, -1 do
+			table.insert(reversedTable, tbl[i])
+		end
+		buf_names = reversedTable
 	end
 
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
@@ -81,7 +109,7 @@ M.BufferChadListBuffers = function()
 	vim.ui.select(buffer_names, {
 	  prompt = "Navigate to a Buffer",
 	}, function(selected)
-	  if selected ~= "" and selected ~= nil then
+	  if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
 		vim.cmd('buffer ' .. selected)
 	  end
 	end)
