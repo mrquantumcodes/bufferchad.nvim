@@ -86,3 +86,7 @@ vim.cmd([[command! BufferChadListBuffers lua BufferChadListBuffers() ]])
   
   -- Set the keybinding to toggle the buffer list window
 --   vim.api.nvim_set_keymap('n', '<leader>bb', '<Cmd>lua OpenBufferListWindow()<CR>', { noremap = true, silent = true })
+
+return {
+    BufferChadListBuffers = BufferChadListBuffers,
+}
