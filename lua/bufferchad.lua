@@ -134,7 +134,7 @@ M.BufferChadListBuffers = function()
 		end
 	end
 
-	-- print(dump(buffer_names))
+	print(dump(buffer_names))
 
 	vim.ui.select(buffer_names, {
 		prompt = "Navigate to a Buffer",
