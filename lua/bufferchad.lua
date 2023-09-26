@@ -43,6 +43,19 @@ function removePathFromFullPath(fullPath, pathToRemove)
 	end
 end
 
+function dump(o)
+	if type(o) == 'table' then
+	   local s = '{ '
+	   for k,v in pairs(o) do
+		  if type(k) ~= 'number' then k = '"'..k..'"' end
+		  s = s .. '['..k..'] = ' .. dump(v) .. ','
+	   end
+	   return s .. '} '
+	else
+	   return tostring(o)
+	end
+ end
+
 -- Function to open the buffer list window in order of usage with the first and second buffers swapped
 M.BufferChadListBuffers = function()
 	-- Use vim.fn.execute to capture the output of ":ls t"
@@ -59,6 +72,8 @@ M.BufferChadListBuffers = function()
 
 	-- Split the buffer list into lines
 	local buf_names = vim.split(buffer_list, "\n")
+
+	dump(buf_names)
 
 	-- Remove the first line (header)
 	table.remove(buf_names, 1)
