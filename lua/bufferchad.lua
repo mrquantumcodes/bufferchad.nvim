@@ -115,7 +115,7 @@ M.BufferChadListBuffers = function()
 
 			local remainingPath = removePathFromFullPath(path2, path1)
 			
-			print(remainingPath)
+			-- print(remainingPath)
 
 			table.insert(buffer_names, remainingPath)
 		end
