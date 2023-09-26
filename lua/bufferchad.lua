@@ -73,7 +73,7 @@ M.BufferChadListBuffers = function()
 	-- Split the buffer list into lines
 	local buf_names = vim.split(buffer_list, "\n")
 
-	dump(buf_names)
+	print(dump(buf_names))
 
 	-- Remove the first line (header)
 	table.remove(buf_names, 1)
