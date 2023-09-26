@@ -111,13 +111,15 @@ M.BufferChadListBuffers = function()
 	local path1 = cwdpath
 	local path2 = ""
 
+	print("hi")
+
 
 	-- Extract the buffer names within double quotes
 	local buffer_names = {}
 	for _, line in ipairs(buf_names) do
 		print(line)
 		local name = line:match('"([^"]+)"')
-		print(name)
+		-- print(name)
 		if name then
 			local myname = name:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 
