@@ -115,6 +115,7 @@ M.BufferChadListBuffers = function()
 	-- Extract the buffer names within double quotes
 	local buffer_names = {}
 	for _, line in ipairs(buf_names) do
+		print(line)
 		local name = line:match('"([^"]+)"')
 		print(name)
 		if name then
