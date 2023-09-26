@@ -120,7 +120,7 @@ M.BufferChadListBuffers = function()
 		local name = line:match('"([^"]+)"')
 		-- print(buf_names[1]:match('"([^"]+)"'))
 		if name then
-			local myname = name:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
+			local myname = name:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/"):gsub("/", ">")
 
 			path2 = myname
 
@@ -140,7 +140,7 @@ M.BufferChadListBuffers = function()
 		prompt = "Navigate to a Buffer",
 	}, function(selected)
 		if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
-			vim.cmd('buffer ' .. selected)
+			vim.cmd('buffer ' .. selected:gsub(">", "/"))
 		end
 	end)
 end
