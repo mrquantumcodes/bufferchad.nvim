@@ -136,7 +136,7 @@ M.BufferChadListBuffers = function()
 
 	print(dump(buffer_names))
 
-	vim.ui.select(buffer_names, {
+	vim.ui.select({"admin>theme_builder>theme_editor_new.php"}, {
 		prompt = "Navigate to a Buffer",
 	}, function(selected)
 		if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
