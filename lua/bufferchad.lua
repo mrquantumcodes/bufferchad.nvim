@@ -103,7 +103,7 @@ M.BufferChadListBuffers = function()
 		buf_names = reversedTable
 	end
 
-	print(dump(buf_names))
+	-- print(dump(buf_names))
 
 
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
@@ -116,6 +116,7 @@ M.BufferChadListBuffers = function()
 	local buffer_names = {}
 	for _, line in ipairs(buf_names) do
 		local name = line:match('"([^"]+)"')
+		print(name)
 		if name then
 			local myname = name:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 
