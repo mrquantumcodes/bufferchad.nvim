@@ -83,7 +83,6 @@ M.BufferChadListBuffers = function()
 		end
 	end
 
-	print(dump(buf_names))
 
 
 	-- Check if there are at least two buffers
@@ -103,6 +102,9 @@ M.BufferChadListBuffers = function()
 		end
 		buf_names = reversedTable
 	end
+
+	print(dump(buf_names))
+
 
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 
