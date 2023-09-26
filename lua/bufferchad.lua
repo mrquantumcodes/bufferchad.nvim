@@ -61,7 +61,7 @@ M.BufferChadListBuffers = function()
 	local buf_names = vim.split(buffer_list, "\n")
 
 	-- Remove the first line (header)
-	table.remove(buf_names, 1)
+	-- table.remove(buf_names, 1)
 
 	-- Check if there are at least two buffers
 
