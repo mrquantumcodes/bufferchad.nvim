@@ -43,19 +43,6 @@ function removePathFromFullPath(fullPath, pathToRemove)
 	end
 end
 
-function dump(o)
-	if type(o) == 'table' then
-	   local s = '{ '
-	   for k,v in pairs(o) do
-		  if type(k) ~= 'number' then k = '"'..k..'"' end
-		  s = s .. '['..k..'] = ' .. dump(v) .. ','
-	   end
-	   return s .. '} '
-	else
-	   return tostring(o)
-	end
- end
-
 -- Function to open the buffer list window in order of usage with the first and second buffers swapped
 M.BufferChadListBuffers = function()
 	-- Use vim.fn.execute to capture the output of ":ls t"
@@ -120,7 +107,7 @@ M.BufferChadListBuffers = function()
 		local name = line:match('"([^"]+)"')
 		-- print(buf_names[1]:match('"([^"]+)"'))
 		if name then
-			local myname = name:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/"):gsub("/", ">")
+			local myname = name:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 
 			path2 = myname
 
@@ -134,13 +121,12 @@ M.BufferChadListBuffers = function()
 		end
 	end
 
-	print(dump(buffer_names))
 
 	vim.ui.select(buffer_names, {
 		prompt = "Navigate to a Buffer",
 	}, function(selected)
 		if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
-			vim.cmd('buffer ' .. selected:gsub(">", "/"))
+			vim.cmd('buffer ' .. selected)
 		end
 	end)
 end
