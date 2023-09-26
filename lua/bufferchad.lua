@@ -134,15 +134,15 @@ M.BufferChadListBuffers = function()
 		end
 	end
 
-	print(dump(buffer_names))
+	-- print(dump(buffer_names))
 
-	-- vim.ui.select(buffer_names, {
-	-- 	prompt = "Navigate to a Buffer",
-	-- }, function(selected)
-	-- 	if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
-	-- 		vim.cmd('buffer ' .. selected)
-	-- 	end
-	-- end)
+	vim.ui.select(buffer_names, {
+		prompt = "Navigate to a Buffer",
+	}, function(selected)
+		if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
+			vim.cmd('buffer ' .. selected)
+		end
+	end)
 end
 
 
