@@ -83,7 +83,7 @@ M.BufferChadListBuffers = function()
 		end
 	end
 
-	-- print(dump(buf_names))
+	print(dump(buf_names))
 
 
 	-- Check if there are at least two buffers
