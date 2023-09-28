@@ -16,7 +16,7 @@ Install using your favourite package manager. Here's how to install BufferChad w
 use {
     "mrquantumcodes/bufferchad.nvim",
 
-    -- uncomment if you want telescope and a modern ui
+    -- uncomment if you want fuzzy search with telescope and a modern ui
 
     -- requires = {
     --    {"nvim-lua/plenary.nvim"},
