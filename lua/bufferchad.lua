@@ -239,7 +239,7 @@ M.push_buffer_to_marked = function(start_line, end_line, position)
 	end
 
 	-- Insert it at the specified position
-	table.insert(M.marked, position, bufname)
+	table.insert(M.marked, (position > #M.marker) and #M.marked + 1 or position, bufname)
 end
 
 -- Function to navigate to the marked buffer by position
