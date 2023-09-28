@@ -2,6 +2,7 @@ local M = {}
 
 
 M.opts = {}
+M.marked = {}
 
 M.setup = function(options)
 	M.opts = options
@@ -11,6 +12,13 @@ M.setup = function(options)
 	if keybinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', keybinding, "",
 			{ noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
+	end
+
+	local markerbinding = options.mark_mapping or "<Leader>bm"
+
+	if markerbinding ~= "NONE" then
+		vim.api.nvim_set_keymap('n', markerbinding, "",
+			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked) end })
 	end
 end
 
@@ -114,7 +122,7 @@ M.BufferChadListBuffers = function()
 			-- print(path1, path2)
 
 			local remainingPath = removePathFromFullPath(path2, path1)
-			
+
 			-- print(remainingPath)
 
 			table.insert(buffer_names, remainingPath)
@@ -122,17 +130,151 @@ M.BufferChadListBuffers = function()
 	end
 
 
-	vim.ui.select(buffer_names, {
-		prompt = "Navigate to a Buffer",
-	}, function(selected)
-		if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
-			vim.cmd('buffer ' .. selected)
-		end
-	end)
+	M.OpenBufferWindow(buffer_names)
+end
+
+M.OpenBufferWindow = function(buffer_names)
+	if pcall(require, 'dressing') then
+		vim.ui.select(buffer_names, {
+			prompt = "Navigate to a Buffer",
+		}, function(selected)
+			if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
+				vim.cmd('buffer ' .. selected)
+			end
+		end)
+	else
+		local bufnr = vim.api.nvim_create_buf(false, true)
+
+		-- Set the buffer contents to the list of buffer paths
+		vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, buffer_names)
+
+		-- Create a window for the buffer
+		local win_id = vim.api.nvim_open_win(bufnr, true, {
+			relative = 'editor',
+			width = 55,
+			height = (#buffer_names <= 5) and #buffer_names or 5,
+			row = vim.o.lines / 2 - #buffer_names / 2 - 1,
+			col = vim.o.columns / 2 - 27.5,
+			style = 'minimal',
+			border = 'rounded',
+			title = 'Navigate to a Buffer',
+			anchor = 'NW'
+		})
+
+		vim.api.nvim_buf_call(bufnr, function()
+			vim.cmd('set nomodifiable')
+		end)
+
+		-- Set key mappings for navigation and buffer opening
+		vim.api.nvim_buf_set_keymap(bufnr, 'n', '<CR>', "", {
+			noremap = true,
+			silent = true,
+			callback = function()
+				local bufnr = vim.fn.bufnr('%')
+				local line_number = vim.fn.line('.')
+				local selected_path = buffer_names[line_number]
+
+				if selected_path then
+					vim.api.nvim_buf_call(bufnr, function()
+						vim.cmd('set modifiable')
+					end)
+
+					vim.cmd('bdelete ' .. bufnr) -- Close the buffer list window
+					-- vim.cmd('edit ' .. selected_path)
+
+					vim.cmd('buffer ' .. selected_path)
+				end
+			end
+		})
+
+		-- Set key mappings for navigation and buffer opening
+		vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Esc><Esc>', "", {
+			noremap = true,
+			silent = true,
+			callback = function()
+				vim.api.nvim_buf_call(bufnr, function()
+					vim.cmd('set modifiable')
+				end)
+
+				vim.cmd('bdelete ' .. bufnr)
+			end
+		})
+
+		-- Store window ID and buffer number for later use
+		vim.api.nvim_buf_set_var(bufnr, 'buffer_list_win_id', win_id)
+	end
 end
 
 
 -- vim.cmd([[command! BufferChadListBuffers lua BufferChadListBuffers() ]])
+
+
+-- Function to push the current buffer to the marked list
+M.push_current_buffer_to_marked = function()
+	local bufnr = vim.fn.bufnr('%')
+	local bufname = vim.fn.bufname(bufnr)
+
+	for k, v in ipairs(M.marked) do
+		if v == bufname then
+			table.remove(M.marked, k)
+		end
+	end
+
+	-- Check if the buffer is not already in the list
+	if not vim.tbl_contains(M.marked, bufname) then
+		table.insert(M.marked, bufname)
+	end
+end
+
+-- Function to push the buffer to the marked list at a specific position
+M.push_buffer_to_marked = function(start_line, end_line, position)
+	local bufnr = vim.fn.bufnr('%')
+	local bufname = vim.fn.bufname(bufnr)
+
+	-- Check if the buffer is not already in the list
+	for k, v in ipairs(M.marked) do
+		if v == bufname then
+			table.remove(M.marked, k)
+		end
+	end
+
+	-- Insert it at the specified position
+	table.insert(M.marked, position, bufname)
+end
+
+-- Function to navigate to the marked buffer by position
+M.navigate_to_marked_buffer = function(position)
+	local bufname = M.marked[position]
+	if bufname then
+		vim.cmd('buffer ' .. bufname)
+		if position > #M.marked then
+			print("No buffer found at position")
+		end
+	end
+
+	print(M.marked[position])
+end
+
+-- Define the key mappings with callbacks
+-- Define the key mappings directly in a loop
+
+vim.api.nvim_set_keymap('n', "mset", "",
+{ noremap = true, silent = true, callback = function() M.push_current_buffer_to_marked() end })
+
+for i = 1, 9 do
+	-- Define the mappings for <N>set
+	vim.api.nvim_set_keymap('n', string.format('%dset', i), "",
+		{ noremap = true, silent = true, callback = function() M.push_buffer_to_marked(1, vim.fn.line("."), i) end })
+	vim.api.nvim_set_keymap('x', string.format('%dset', i), "",
+		{ noremap = true, silent = true, callback = function() M.push_buffer_to_marked(1, vim.fn.line("."), i) end })
+
+	-- Define the mappings for <N>nav
+	vim.api.nvim_set_keymap('n', string.format('%dnav', i), "",
+		{ noremap = true, silent = true, callback = function() M.navigate_to_marked_buffer(i) end })
+	vim.api.nvim_set_keymap('x', string.format('%dnav', i), "",
+		{ noremap = true, silent = true, callback = function() M.navigate_to_marked_buffer(i) end })
+end
+
 
 
 
