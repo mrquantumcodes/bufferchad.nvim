@@ -31,15 +31,15 @@ Next, add the following lines to your `index.lua`:
 
 ```lua
 require("bufferchad").setup({
-  mapping = "\<leader\>bb", -- Map any key, or set to NONE to disable key mapping
-  mark_mapping = "\<leader\>bm" -- The keybinding to display just the marked buffers
+  mapping = "<leader>bb", -- Map any key, or set to NONE to disable key mapping
+  mark_mapping = "<leader>bm" -- The keybinding to display just the marked buffers
   order = "LAST_USED_UP" -- LAST_USED_UP (default)/ASCENDING/DESCENDING/REGULAR
 })
 ```
 
 ## Configuration options
 
-Change the mapping to anything you like, I recommend \"<leader\>bb".
+Change the mapping to anything you like, I recommend "\<leader\>bb" for listing all buffers and "\<leader\>bm" for listing marked buffers.
 
 The order parameter can have the following arguments:
 
