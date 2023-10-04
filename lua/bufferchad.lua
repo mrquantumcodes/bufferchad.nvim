@@ -154,7 +154,7 @@ M.OpenBufferWindow = function(buffer_names)
 		local win_id = vim.api.nvim_open_win(bufnr, true, {
 			relative = 'editor',
 			width = 55,
-			height = (#buffer_names <= 5) and #buffer_names or 5,
+			height = 5,
 			row = vim.o.lines / 2 - #buffer_names / 2 - 1,
 			col = vim.o.columns / 2 - 27.5,
 			style = 'minimal',
