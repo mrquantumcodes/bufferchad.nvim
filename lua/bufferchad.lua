@@ -9,7 +9,7 @@ M.setup = function(options)
 
 	local keybinding = options.mapping or "<Leader>bb"
 
-	local style = options.style or "modern"
+	M.opts.style = options.style or "modern"
 
 	if keybinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', keybinding, "",
