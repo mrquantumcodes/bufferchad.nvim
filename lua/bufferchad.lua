@@ -9,6 +9,8 @@ M.setup = function(options)
 
 	local keybinding = options.mapping or "<Leader>bb"
 
+	local style = options.style or "modern"
+
 	if keybinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', keybinding, "",
 			{ noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
@@ -134,7 +136,7 @@ M.BufferChadListBuffers = function()
 end
 
 M.OpenBufferWindow = function(buffer_names)
-	if pcall(require, 'dressing') then
+	if pcall(require, 'dressing') and M.opts.style == "modern" then
 		vim.ui.select(buffer_names, {
 			prompt = "Navigate to a Buffer",
 		}, function(selected)
