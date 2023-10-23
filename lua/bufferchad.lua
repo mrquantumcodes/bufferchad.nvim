@@ -210,7 +210,7 @@ M.OpenBufferWindow = function(buffer_names)
 		local conf = require("telescope.config").values
 
 		pickers.new({}, {
-			prompt_title = "colors",
+			prompt_title = "Navigate to a Buffer",
 			finder = finders.new_table {
 				results = buffer_names
 			},
