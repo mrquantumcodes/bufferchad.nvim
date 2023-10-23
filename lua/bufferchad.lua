@@ -205,18 +205,22 @@ M.OpenBufferWindow = function(buffer_names)
 		-- Store window ID and buffer number for later use
 		vim.api.nvim_buf_set_var(bufnr, 'buffer_list_win_id', win_id)
 	else
-		local pickers = require "telescope.pickers"
-		local finders = require "telescope.finders"
-		local conf = require("telescope.config").values
+		if pcall(require, 'telescope') then
+			local pickers = require "telescope.pickers"
+			local finders = require "telescope.finders"
+			local conf = require("telescope.config").values
 
-		pickers.new({}, {
-			prompt_title = "Navigate to a Buffer",
-			finder = finders.new_table {
-				results = buffer_names
-			},
-			sorter = conf.generic_sorter({}),
-			previewer = conf.grep_previewer({}),
-		}):find()
+			pickers.new({}, {
+				prompt_title = "Navigate to a Buffer",
+				finder = finders.new_table {
+					results = buffer_names
+				},
+				sorter = conf.generic_sorter({}),
+				previewer = conf.grep_previewer({}),
+			}):find()
+		else
+			print("Telescope is not installed")
+		end
 	end
 end
 
