@@ -144,7 +144,7 @@ M.OpenBufferWindow = function(buffer_names)
 				vim.cmd('buffer ' .. selected)
 			end
 		end)
-	else
+	elseif M.opts.style == "default" then
 		local bufnr = vim.api.nvim_create_buf(false, true)
 
 		-- Set the buffer contents to the list of buffer paths
@@ -204,6 +204,19 @@ M.OpenBufferWindow = function(buffer_names)
 
 		-- Store window ID and buffer number for later use
 		vim.api.nvim_buf_set_var(bufnr, 'buffer_list_win_id', win_id)
+	else
+		local pickers = require "telescope.pickers"
+		local finders = require "telescope.finders"
+		local conf = require("telescope.config").values
+
+		pickers.new({}, {
+			prompt_title = "colors",
+			finder = finders.new_table {
+				results = buffer_names
+			},
+			sorter = conf.generic_sorter({}),
+			previewer = conf.grep_previewer({}),
+		}):find()
 	end
 end
 
@@ -261,7 +274,7 @@ end
 -- Define the key mappings directly in a loop
 
 vim.api.nvim_set_keymap('n', "mset", "",
-{ noremap = true, silent = true, callback = function() M.push_current_buffer_to_marked() end })
+	{ noremap = true, silent = true, callback = function() M.push_current_buffer_to_marked() end })
 
 for i = 1, 9 do
 	-- Define the mappings for <N>set
