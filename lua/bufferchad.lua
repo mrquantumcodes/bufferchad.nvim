@@ -20,7 +20,7 @@ M.setup = function(options)
 
 	if markerbinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', markerbinding, "",
-			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked, title="Marked Buffers") end })
+			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked, "Marked Buffers") end })
 	end
 end
 
