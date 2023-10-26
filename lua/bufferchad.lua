@@ -20,7 +20,7 @@ M.setup = function(options)
 
 	if markerbinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', markerbinding, "",
-			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked) end })
+			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked, title="Marked Buffers") end })
 	end
 end
 
@@ -132,13 +132,13 @@ M.BufferChadListBuffers = function()
 	end
 
 
-	M.OpenBufferWindow(buffer_names)
+	M.OpenBufferWindow(buffer_names, "Navigate to a Buffer")
 end
 
-M.OpenBufferWindow = function(buffer_names)
+M.OpenBufferWindow = function(buffer_names, title)
 	if pcall(require, 'dressing') and M.opts.style == "modern" then
 		vim.ui.select(buffer_names, {
-			prompt = "Navigate to a Buffer",
+			prompt = title,
 		}, function(selected)
 			if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
 				vim.cmd('buffer ' .. selected)
