@@ -241,11 +241,12 @@ M.push_current_buffer_to_marked = function()
 
 	-- get bufname ready by expanding home directory and replacing backslashes with forward slashes
 	bufname = bufname:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
-	print(bufname)
+	-- print(bufname)
 	-- remove unnecessary paths from the mark name, like the current working directory
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 	-- remove cwdpath from bufname
-	bufname = bufname:gsub(cwdpath, "")
+	-- bufname = bufname:gsub(cwdpath, "")
+	bufname = removePathFromFullPath(bufname, cwdpath)
 
 	-- Check if the buffer is not already in the list
 	if not vim.tbl_contains(M.marked, bufname) then
@@ -271,7 +272,8 @@ M.push_buffer_to_marked = function(start_line, end_line, position)
 	-- subtract unnecessary paths from the mark name, like the current working directory
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 	-- remove cwdpath from bufname
-	bufname = bufname:gsub(cwdpath, "")
+	-- bufname = bufname:gsub(cwdpath, "")
+	bufname = removePathFromFullPath(bufname, cwdpath)
 
 	-- Insert it at the specified position
 	table.insert(M.marked, (position > #M.marked) and #M.marked + 1 or position, bufname)
