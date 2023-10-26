@@ -159,7 +159,7 @@ M.OpenBufferWindow = function(buffer_names, title)
 			col = vim.o.columns / 2 - 27.5,
 			style = 'minimal',
 			border = 'rounded',
-			title = 'Navigate to a Buffer',
+			title = title,
 			anchor = 'NW'
 		})
 
@@ -211,7 +211,7 @@ M.OpenBufferWindow = function(buffer_names, title)
 			local conf = require("telescope.config").values
 
 			pickers.new({}, {
-				prompt_title = "Navigate to a Buffer",
+				prompt_title = title,
 				finder = finders.new_table {
 					results = buffer_names
 				},
