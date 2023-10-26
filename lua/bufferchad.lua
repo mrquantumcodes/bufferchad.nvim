@@ -239,7 +239,7 @@ M.push_current_buffer_to_marked = function()
 		end
 	end
 
-	// remove unnecessary paths from the mark name, like the current working directory
+	-- remove unnecessary paths from the mark name, like the current working directory
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 
 	-- Check if the buffer is not already in the list
@@ -261,7 +261,7 @@ M.push_buffer_to_marked = function(start_line, end_line, position)
 	end
 
 
-	// subtract unnecessary paths from the mark name, like the current working directory
+	-- subtract unnecessary paths from the mark name, like the current working directory
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 
 	-- Insert it at the specified position
