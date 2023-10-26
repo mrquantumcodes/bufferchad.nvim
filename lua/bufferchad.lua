@@ -241,6 +241,7 @@ M.push_current_buffer_to_marked = function()
 
 	-- get bufname ready by expanding home directory and replacing backslashes with forward slashes
 	bufname = bufname:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
+	print(bufname)
 	-- remove unnecessary paths from the mark name, like the current working directory
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 	-- remove cwdpath from bufname
