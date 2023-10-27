@@ -295,6 +295,15 @@ end
 -- Define the key mappings with callbacks
 -- Define the key mappings directly in a loop
 
+function findMarkedBuffer(bufname)
+	for k, v in ipairs(M.marked) do
+		if v == bufname then
+			return k
+		end
+	end
+	return nil
+end
+
 vim.api.nvim_set_keymap('n', "mset", "",
 	{ noremap = true, silent = true, callback = function() M.push_current_buffer_to_marked() end })
 
@@ -304,6 +313,31 @@ for i = 1, 9 do
 		{ noremap = true, silent = true, callback = function() M.push_buffer_to_marked(1, vim.fn.line("."), i) end })
 	vim.api.nvim_set_keymap('x', string.format('%dset', i), "",
 		{ noremap = true, silent = true, callback = function() M.push_buffer_to_marked(1, vim.fn.line("."), i) end })
+
+	-- Define the mappings for <N>del
+	vim.api.nvim_set_keymap('n', string.format('%ddel', i), "",
+		{ noremap = true, silent = true, callback = function() table.remove(M.marked, i) end })
+	vim.api.nvim_set_keymap('x', string.format('%ddel', i), "",
+		{ noremap = true, silent = true, callback = function() table.remove(M.marked, i) end })
+
+	-- Define the mappings for <N>swap
+	vim.api.nvim_set_keymap('n', string.format('%dswap', i), "",
+		{
+			noremap = true,
+			silent = true,
+			callback = function()
+				-- find this mark in M.marked
+				local thisBuf = findMarkedBuffer(vim.fn.bufname(vim.fn.bufnr('%')):gsub("\\", "/"))
+				local thisBufContent = M.marked[thisBuf]
+				local temp = M.marked[i]
+				if i > #M.marked then
+					M.marked[i] = thisBufContent
+				else
+					M.marked[#M.marked + 1] = thisBufContent
+				end
+				M.marked[thisBuf] = temp
+			end
+		})
 
 	-- Define the mappings for <N>nav
 	vim.api.nvim_set_keymap('n', string.format('%dnav', i), "",
