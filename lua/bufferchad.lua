@@ -136,7 +136,8 @@ M.BufferChadListBuffers = function()
 end
 
 M.OpenBufferWindow = function(buffer_names, title)
-	if pcall(require, 'dressing') and M.opts.style == "modern" then
+	local dressingInstalled = pcall(require, 'dressing')
+	if dressingInstalled and M.opts.style == "modern" then
 		vim.ui.select(buffer_names, {
 			prompt = title,
 		}, function(selected)
@@ -144,7 +145,7 @@ M.OpenBufferWindow = function(buffer_names, title)
 				vim.cmd('buffer ' .. selected)
 			end
 		end)
-	elseif M.opts.style == "default" then
+	elseif M.opts.style == "default" or (not dressingInstalled and M.opts.style ~= "telescope") then
 		local bufnr = vim.api.nvim_create_buf(false, true)
 
 		-- Set the buffer contents to the list of buffer paths
