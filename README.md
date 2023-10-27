@@ -10,7 +10,12 @@ An simple, customisable Buffer Manager for Neovim that `just works` out of the b
 
 ## Installation and setup
 
-Install using your favourite package manager. Here's how to install BufferChad with `Packer`:
+Install using your favourite package manager. For Example:
+
+<details>
+<summary>
+    Packer
+</summary>
 
 ```lua
 use {
@@ -26,6 +31,28 @@ use {
     -- }
 }
 ```
+</details>
+
+<details>
+<summary>
+    Lazy
+</summary>
+
+```lua
+{
+    "mrquantumcodes/bufferchad.nvim",
+
+    -- uncomment if you want fuzzy search with telescope and a modern ui
+
+    -- dependencies = {
+    --    {"nvim-lua/plenary.nvim"},
+    --    {"MunifTanjim/nui.nvim"},
+    --    {"stevearc/dressing.nvim"},
+    --    {"nvim-telescope/telescope.nvim"} -- needed for fuzzy search, but should work fine even without it
+    -- }
+}
+```
+</details>
 
 Next, add the following lines to your `index.lua`:
 
