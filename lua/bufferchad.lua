@@ -316,6 +316,8 @@ vim.api.nvim_set_keymap('n', string.format('mdel', i), "",
 			markedBuffer = findMarkedBuffer(vim.fn.bufname(vim.fn.bufnr('%')):gsub("\\", "/"))
 			if markedBuffer ~= nil then
 				table.remove(M.marked, markedBuffer)
+			else
+				print("This buffer is not marked")
 			end
 		end
 	})

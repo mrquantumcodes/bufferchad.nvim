@@ -56,8 +56,12 @@ The order parameter can have the following arguments:
 
 Now, BufferChad allows you to mark files like the `Harpoon` plugin. This let's you quickly switch between specific files instead of going through a list of all the buffers you have used till now.
 
-Use the "mset" keymap to mark the current file in the last position of the register, or `<1-9>set` to mark the current file the location of your choice. Then, use `<1-9>nav` to quickly navigate to that buffer. For example:
+Use the `mset` keymap to mark the current file in the last position of the register, or `<1-9>set` to mark the current file the location of your choice. Then, use `<1-9>nav` to quickly navigate to that buffer. For example:
 * `5set` to set this buffer to the 5th position.
 * `5nav` to navigate to the buffer in that position.
 
+Use the `mdel` keymap to delete the current buffer from marks list
+
 __Note:__ If you enter a number greater than the number of already marked elements, say trying to mark a buffer to index 5 when only 3 buffers have been marked previously, the current buffer will be marked to index 4 instead of 5.
+
+__**NOTE:__ The `<1-9>set` mapping is somewhat unpredictable currently and can lead to duplicate buffers. This will be fixed soon.
