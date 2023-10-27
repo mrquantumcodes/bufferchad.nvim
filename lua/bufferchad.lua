@@ -307,18 +307,17 @@ end
 vim.api.nvim_set_keymap('n', "mset", "",
 	{ noremap = true, silent = true, callback = function() M.push_current_buffer_to_marked() end })
 
+-- Define the mappings for mdel
+vim.api.nvim_set_keymap('n', string.format('mdel', i), "",
+	{ noremap = true, silent = true,
+		callback = function() table.remove(M.marked, findMarkedBuffer(vim.fn.bufname(vim.fn.bufnr('%')):gsub("\\", "/"))) end })
+
 for i = 1, 9 do
 	-- Define the mappings for <N>set
 	vim.api.nvim_set_keymap('n', string.format('%dset', i), "",
 		{ noremap = true, silent = true, callback = function() M.push_buffer_to_marked(1, vim.fn.line("."), i) end })
 	vim.api.nvim_set_keymap('x', string.format('%dset', i), "",
 		{ noremap = true, silent = true, callback = function() M.push_buffer_to_marked(1, vim.fn.line("."), i) end })
-
-	-- Define the mappings for <N>del
-	vim.api.nvim_set_keymap('n', string.format('%ddel', i), "",
-		{ noremap = true, silent = true, callback = function() table.remove(M.marked, i) end })
-	vim.api.nvim_set_keymap('x', string.format('%ddel', i), "",
-		{ noremap = true, silent = true, callback = function() table.remove(M.marked, i) end })
 
 	-- Define the mappings for <N>swap
 	vim.api.nvim_set_keymap('n', string.format('%dswap', i), "",
