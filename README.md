@@ -40,7 +40,7 @@ require("bufferchad").setup({
 
 ## Configuration options
 
-Change the mapping to anything you like, I recommend "\<leader\>bb" for listing all buffers and "\<leader\>bm" for listing marked buffers.
+Change the mapping to anything you like, I recommend `\<leader\>bb` for listing all buffers and `\<leader\>bm` for listing marked buffers.
 
 The order parameter can have the following arguments:
 
@@ -62,6 +62,8 @@ Use the `mset` keymap to mark the current file in the last position of the regis
 
 Use the `mdel` keymap to delete the current buffer from marks list
 
+Use your `mark_mapping` (default is `\<leader\>bm`) keymap to view your marks list
+
 __Note:__ If you enter a number greater than the number of already marked elements, say trying to mark a buffer to index 5 when only 3 buffers have been marked previously, the current buffer will be marked to index 4 instead of 5.
 
-__**NOTE:__ The `<1-9>set` mapping is somewhat unpredictable currently and can lead to duplicate buffers. This will be fixed soon.
+__**NOTE:__ The `<1-9>set` mapping is somewhat unpredictable currently and can lead to duplicate marks. This will be fixed soon.
