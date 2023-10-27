@@ -309,8 +309,16 @@ vim.api.nvim_set_keymap('n', "mset", "",
 
 -- Define the mappings for mdel
 vim.api.nvim_set_keymap('n', string.format('mdel', i), "",
-	{ noremap = true, silent = true,
-		callback = function() table.remove(M.marked, findMarkedBuffer(vim.fn.bufname(vim.fn.bufnr('%')):gsub("\\", "/"))) end })
+	{
+		noremap = true,
+		silent = true,
+		callback = function()
+			markedBuffer = findMarkedBuffer(vim.fn.bufname(vim.fn.bufnr('%')):gsub("\\", "/"))
+			if markedBuffer ~= nil then
+				table.remove(M.marked, markedBuffer)
+			end
+		end
+	})
 
 for i = 1, 9 do
 	-- Define the mappings for <N>set
