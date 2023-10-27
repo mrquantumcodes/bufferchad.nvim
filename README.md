@@ -7,6 +7,7 @@ An simple, customisable Buffer Manager for Neovim that `just works` out of the b
 # *What's new?
 * Now, you no longer need to install `dressing.nvim` and `nui.nvim` like before, simply to use the plugin. If those plugins are not downloaded, buffers will be displayed using neovim's native window api and you can search buffers using the `slash (/)` key. If you do install Dressing and Nui, they will be automatically picked up and the Buffer Picker UI will change accordingly.
 * Also, you can now mark files like `Harpoon` to quickly navigate between them.
+* Telescope Integration
 
 ## Installation and setup
 
