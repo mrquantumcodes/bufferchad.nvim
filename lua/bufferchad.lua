@@ -191,7 +191,7 @@ M.OpenBufferWindow = function(buffer_names, title)
 		})
 
 		-- Set key mappings for navigation and buffer opening
-		vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Esc><Esc>', "", {
+		vim.api.nvim_buf_set_keymap(bufnr, 'n', M.opts.close_binding or '<Esc><Esc>', "", {
 			noremap = true,
 			silent = true,
 			callback = function()

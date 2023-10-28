@@ -7,10 +7,16 @@ An simple, customisable Buffer Manager for Neovim that `just works` out of the b
 # *What's new?
 * Now, you no longer need to install `dressing.nvim` and `nui.nvim` like before, simply to use the plugin. If those plugins are not downloaded, buffers will be displayed using neovim's native window api and you can search buffers using the `slash (/)` key. If you do install Dressing and Nui, they will be automatically picked up and the Buffer Picker UI will change accordingly.
 * Also, you can now mark files like `Harpoon` to quickly navigate between them.
+* Telescope Integration
 
 ## Installation and setup
 
-Install using your favourite package manager. Here's how to install BufferChad with `Packer`:
+Install using your favourite package manager. For Example:
+
+<details>
+<summary>
+    Packer
+</summary>
 
 ```lua
 use {
@@ -26,6 +32,28 @@ use {
     -- }
 }
 ```
+</details>
+
+<details>
+<summary>
+    Lazy
+</summary>
+
+```lua
+{
+    "mrquantumcodes/bufferchad.nvim",
+
+    -- uncomment if you want fuzzy search with telescope and a modern ui
+
+    -- dependencies = {
+    --    {"nvim-lua/plenary.nvim"},
+    --    {"MunifTanjim/nui.nvim"},
+    --    {"stevearc/dressing.nvim"},
+    --    {"nvim-telescope/telescope.nvim"} -- needed for fuzzy search, but should work fine even without it
+    -- }
+}
+```
+</details>
 
 Next, add the following lines to your `index.lua`:
 
