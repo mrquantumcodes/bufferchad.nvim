@@ -153,7 +153,7 @@ M.OpenBufferWindow = function(buffer_names, title)
 
 		-- Create a window for the buffer
 		local win_id = vim.api.nvim_open_win(bufnr, true, {
-			relative = 'editor',
+			relative = 'win',
 			width = 55,
 			height = 10,
 			row = vim.o.lines / 2 - #buffer_names / 2 - 1,
