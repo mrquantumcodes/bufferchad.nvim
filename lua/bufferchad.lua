@@ -11,7 +11,7 @@ if not vim.loop.fs_stat(M.session_dir) then
 end
 
 -- Check if marks file exists
-local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
 if vim.loop.fs_stat(marksFile) then
 	-- read the marks file and store it in M.marked
 	-- M.marked = vim.fn.readfile(marksFile)
@@ -25,7 +25,7 @@ end
 
 
 
-function pathToFilename(path)
+M.pathToFilename = function(path)
 	local encoded = ""
 	for i = 1, #path do
 		encoded = encoded .. string.byte(path, i) .. "_"
@@ -229,8 +229,8 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 							-- get all text from the buffer and store it in a variable
 							local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 	
-							-- name of marks file is cwd with pathToFilename
-							local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+							-- name of marks file is cwd with M.pathToFilename
+							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
 	
 							-- write the buffer content to the marks filename
 							vim.fn.writefile(buffer_content, marksFile)
@@ -257,8 +257,8 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 						-- get all text from the buffer and store it in a variable
 						local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
-						-- name of marks file is cwd with pathToFilename
-						local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+						-- name of marks file is cwd with M.pathToFilename
+						local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
 
 						-- write the buffer content to the marks filename
 						vim.fn.writefile(buffer_content, marksFile)
