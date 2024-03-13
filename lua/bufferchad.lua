@@ -10,19 +10,6 @@ if not vim.loop.fs_stat(M.session_dir) then
 	vim.fn.mkdir(M.session_dir, "p")
 end
 
--- Check if marks file exists
-local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
-if vim.loop.fs_stat(marksFile) then
-	-- read the marks file and store it in M.marked
-	-- M.marked = vim.fn.readfile(marksFile)
-	-- read the marks file and store it in M.marked as array
-	local file = io.open(marksFile, "r")
-	for line in file:lines() do
-		table.insert(M.marked, line)
-	end
-	file:close()
-end
-
 
 
 M.pathToFilename = function(path)
@@ -44,6 +31,19 @@ M.filenameToPath = function(filename)
 		decoded = decoded .. string.char(value)
 	end
 	return decoded
+end
+
+-- Check if marks file exists
+local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
+if vim.loop.fs_stat(marksFile) then
+	-- read the marks file and store it in M.marked
+	-- M.marked = vim.fn.readfile(marksFile)
+	-- read the marks file and store it in M.marked as array
+	local file = io.open(marksFile, "r")
+	for line in file:lines() do
+		table.insert(M.marked, line)
+	end
+	file:close()
 end
 
 M.setup = function(options)
