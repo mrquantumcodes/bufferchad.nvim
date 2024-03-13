@@ -33,19 +33,6 @@ M.filenameToPath = function(filename)
 	return decoded
 end
 
--- Check if marks file exists
-local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
--- if vim.loop.fs_stat(marksFile) then
--- read the marks file and store it in M.marked
--- M.marked = vim.fn.readfile(marksFile)
--- read the marks file and store it in M.marked as array
-local file = io.open(marksFile, "r+")
-for line in file:lines() do
-	table.insert(M.marked, line)
-end
-file:close()
--- end
-
 M.setup = function(options)
 	M.opts = options
 
@@ -185,6 +172,22 @@ M.BufferChadListBuffers = function()
 end
 
 M.OpenBufferWindow = function(buffer_names, title, mode)
+	-- Check if marks file exists
+	local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
+
+	if mode == "marked" then
+		if vim.loop.fs_stat(marksFile) then
+			-- read the marks file and store it in M.marked
+			-- M.marked = vim.fn.readfile(marksFile)
+			-- read the marks file and store it in M.marked as array
+			local file = io.open(marksFile, "r+")
+			for line in file:lines() do
+				table.insert(M.marked, line)
+			end
+			file:close()
+		end
+	end
+
 	local dressingInstalled = pcall(require, 'dressing')
 	if dressingInstalled and M.opts.style == "modern" then
 		vim.ui.select(buffer_names, {
