@@ -62,7 +62,8 @@ M.setup = function(options)
 
 	if markerbinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', markerbinding, "",
-			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked, "Marked Buffers") end })
+			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked, "Marked Buffers",
+					"marked") end })
 	end
 end
 
@@ -174,10 +175,10 @@ M.BufferChadListBuffers = function()
 	end
 
 
-	M.OpenBufferWindow(buffer_names, "Navigate to a Buffer")
+	M.OpenBufferWindow(buffer_names, "Navigate to a Buffer", "buffer")
 end
 
-M.OpenBufferWindow = function(buffer_names, title)
+M.OpenBufferWindow = function(buffer_names, title, mode)
 	local dressingInstalled = pcall(require, 'dressing')
 	if dressingInstalled and M.opts.style == "modern" then
 		vim.ui.select(buffer_names, {
@@ -223,6 +224,17 @@ M.OpenBufferWindow = function(buffer_names, title)
 				if selected_path then
 					vim.api.nvim_buf_call(bufnr, function()
 						vim.cmd('set modifiable')
+
+						if mode == "marked" then
+							-- get all text from the buffer and store it in a variable
+							local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+	
+							-- name of marks file is cwd with pathToFilename
+							local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+	
+							-- write the buffer content to the marks filename
+							vim.fn.writefile(buffer_content, marksFile)
+						end
 					end)
 
 					vim.cmd('bdelete ' .. bufnr) -- Close the buffer list window
@@ -240,14 +252,17 @@ M.OpenBufferWindow = function(buffer_names, title)
 			callback = function()
 				vim.api.nvim_buf_call(bufnr, function()
 					vim.cmd('set modifiable')
-					-- get all text from the buffer and store it in a variable
-					local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
-					-- name of marks file is cwd with pathToFilename
-					local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+					if mode == "marked" then
+						-- get all text from the buffer and store it in a variable
+						local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
-					-- write the buffer content to the marks filename
-					vim.fn.writefile(buffer_content, marksFile)
+						-- name of marks file is cwd with pathToFilename
+						local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+
+						-- write the buffer content to the marks filename
+						vim.fn.writefile(buffer_content, marksFile)
+					end
 				end)
 
 				vim.cmd('bdelete ' .. bufnr)
