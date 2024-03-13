@@ -35,16 +35,16 @@ end
 
 -- Check if marks file exists
 local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
-if vim.loop.fs_stat(marksFile) then
-	-- read the marks file and store it in M.marked
-	-- M.marked = vim.fn.readfile(marksFile)
-	-- read the marks file and store it in M.marked as array
-	local file = io.open(marksFile, "r")
-	for line in file:lines() do
-		table.insert(M.marked, line)
-	end
-	file:close()
+-- if vim.loop.fs_stat(marksFile) then
+-- read the marks file and store it in M.marked
+-- M.marked = vim.fn.readfile(marksFile)
+-- read the marks file and store it in M.marked as array
+local file = io.open(marksFile, "r+")
+for line in file:lines() do
+	table.insert(M.marked, line)
 end
+file:close()
+-- end
 
 M.setup = function(options)
 	M.opts = options
@@ -62,8 +62,14 @@ M.setup = function(options)
 
 	if markerbinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', markerbinding, "",
-			{ noremap = true, silent = true, callback = function() M.OpenBufferWindow(M.marked, "Marked Buffers",
-					"marked") end })
+			{
+				noremap = true,
+				silent = true,
+				callback = function()
+					M.OpenBufferWindow(M.marked, "Marked Buffers",
+						"marked")
+				end
+			})
 	end
 end
 
@@ -228,10 +234,10 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 						if mode == "marked" then
 							-- get all text from the buffer and store it in a variable
 							local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-	
+
 							-- name of marks file is cwd with M.pathToFilename
 							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
-	
+
 							-- write the buffer content to the marks filename
 							vim.fn.writefile(buffer_content, marksFile)
 						end
