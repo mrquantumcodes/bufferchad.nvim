@@ -34,7 +34,7 @@ M.pathToFilename = function(path)
 end
 
 -- Function to decode a reversible string back to a path
-function filenameToPath(filename)
+M.filenameToPath = function(filename)
 	local decoded = ""
 	local parts = {}
 	for part in filename:gmatch("[^_]+") do
