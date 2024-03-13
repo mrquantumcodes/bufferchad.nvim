@@ -4,6 +4,48 @@ local M = {}
 M.opts = {}
 M.marked = {}
 
+M.session_dir = vim.fn.stdpath('data'):gsub("\\", "/") .. "/marked_buffers/"
+-- create the session directory if it doesn't exist
+if not vim.loop.fs_stat(M.session_dir) then
+	vim.fn.mkdir(M.session_dir, "p")
+end
+
+-- Check if marks file exists
+local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+if vim.loop.fs_stat(marksFile) then
+	-- read the marks file and store it in M.marked
+	-- M.marked = vim.fn.readfile(marksFile)
+	-- read the marks file and store it in M.marked as array
+	local file = io.open(marksFile, "r")
+	for line in file:lines() do
+		table.insert(M.marked, line)
+	end
+	file:close()
+end
+
+
+
+function pathToFilename(path)
+	local encoded = ""
+	for i = 1, #path do
+		encoded = encoded .. string.byte(path, i) .. "_"
+	end
+	return encoded
+end
+
+-- Function to decode a reversible string back to a path
+function filenameToPath(filename)
+	local decoded = ""
+	local parts = {}
+	for part in filename:gmatch("[^_]+") do
+		table.insert(parts, tonumber(part))
+	end
+	for _, value in ipairs(parts) do
+		decoded = decoded .. string.char(value)
+	end
+	return decoded
+end
+
 M.setup = function(options)
 	M.opts = options
 
@@ -165,7 +207,7 @@ M.OpenBufferWindow = function(buffer_names, title)
 		})
 
 		vim.api.nvim_buf_call(bufnr, function()
-			vim.cmd('set nomodifiable')
+			vim.cmd('set modifiable')
 			vim.cmd('set cursorline')
 		end)
 
@@ -198,6 +240,14 @@ M.OpenBufferWindow = function(buffer_names, title)
 			callback = function()
 				vim.api.nvim_buf_call(bufnr, function()
 					vim.cmd('set modifiable')
+					-- get all text from the buffer and store it in a variable
+					local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+					-- name of marks file is cwd with pathToFilename
+					local marksFile = M.session_dir .. pathToFilename(vim.fn.getcwd())
+
+					-- write the buffer content to the marks filename
+					vim.fn.writefile(buffer_content, marksFile)
 				end)
 
 				vim.cmd('bdelete ' .. bufnr)
