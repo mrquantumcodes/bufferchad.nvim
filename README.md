@@ -9,6 +9,11 @@ An simple, customisable Buffer Manager for Neovim that `just works` out of the b
 * Also, you can now mark files like `Harpoon` to quickly navigate between them.
 * Telescope Integration
 
+# *What's New-NEW?
+* Marked buffer list can now be edited like a normal buffer, just like Harpoon
+* Marked buffers now persist across sessions (or different working directories in general), just like Harpoon
+* There is a new, basic api to navigate to any marked buffer without opening the buffer list, just like Harpoon
+
 ## Installation and setup
 
 Install using your favourite package manager. For Example:
@@ -62,14 +67,17 @@ require("bufferchad").setup({
   mapping = "<leader>bb", -- Map any key, or set to NONE to disable key mapping
   mark_mapping = "<leader>bm", -- The keybinding to display just the marked buffers
   order = "LAST_USED_UP", -- LAST_USED_UP (default)/ASCENDING/DESCENDING/REGULAR
-  style = "default" -- default, modern (requires dressing.nvim and nui.nvim), telescope (requires telescope.nvim)
+  style = "default", -- default, modern (requires dressing.nvim and nui.nvim), telescope (requires telescope.nvim)
   close_mapping = "<Esc><Esc>", -- only for the default style window. 
+  normal_editor_mapping = "NONE" -- read use case below
 })
 ```
 
 ## Configuration options
 
 Change the mapping to anything you like, I recommend `<leader>bb` for listing all buffers and `<leader>bm` for listing marked buffers.
+
+*NOTE:* The `normal_editor_mapping` parameter, while optional, is required to be able to edit the indexes of marked buffers. If you want to change your marked buffers, such as reordering them, but you wanna use telescope or modern style for your core ui, then you need to use this parameter, because for now, only the normal style buffer list ui supports editing of it's contents.
 
 The order parameter can have the following arguments:
 
@@ -85,14 +93,8 @@ The order parameter can have the following arguments:
 
 Now, BufferChad allows you to mark files like the `Harpoon` plugin. This let's you quickly switch between specific files instead of going through a list of all the buffers you have used till now.
 
-Use the `mset` keymap to mark the current file in the last position of the register, or `<1-9>set` to mark the current file the location of your choice. Then, use `<1-9>nav` to quickly navigate to that buffer. For example:
-* `5set` to set this buffer to the 5th position.
-* `5nav` to navigate to the buffer in that position.
-
-Use the `mdel` keymap to delete the current buffer from marks list
+Use the `mset` keymap to mark the current file in the last position of the register, or `<1-9>set` to mark the current file the location of your choice. Then, to navigate, you can use either of the following options:
+* `require("bufferchad").nav_to_marked(MARK_NUMBER)` (replace MARK_NUMBER with your mark number) to navigate to that mark.
+* Use your marks list using the `mark_mapping` or the `normal_editor_mapping` keybinding.
 
 Use your `mark_mapping` (default is `<leader>bm`) keymap to view your marks list
-
-__Note:__ If you enter a number greater than the number of already marked elements, say trying to mark a buffer to index 5 when only 3 buffers have been marked previously, the current buffer will be marked to index 4 instead of 5.
-
-__**NOTE:__ The `<1-9>set` mapping is somewhat unpredictable currently and can lead to duplicate marks. This will be fixed soon.
