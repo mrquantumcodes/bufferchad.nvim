@@ -58,10 +58,10 @@ M.setup = function(options)
 
 	M.opts.style = options.style or "modern"
 
-	if options.normalEditorMapping and options.normalEditorMapping ~= "NONE" then
+	if options.normal_editor_mapping and options.normal_editor_mapping ~= "NONE" then
 		vim.keymap.set({
 			mode = "n",
-			key = options.normalEditorMapping,
+			key = options.normal_editor_mapping,
 			callback = M.MarkedBuffersOpen(true),
 			options = { noremap = true, silent = true }
 		})
