@@ -11,6 +11,24 @@ if not vim.loop.fs_stat(M.session_dir) then
 end
 
 
+M.MarkedBuffersOpen = function(mode)
+	-- Check if marks file exists
+	local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
+
+	if vim.fn.filereadable(marksFile) == 1 then
+		M.marked = {}
+		M.marked = vim.fn.readfile(marksFile)
+		for k, v in ipairs(M.marked) do
+			if v == "" then
+				table.remove(M.marked, k)
+			end
+		end
+	end
+
+	M.OpenBufferWindow(M.marked, "Marked Buffers",
+		"marked", mode)
+end
+
 
 M.pathToFilename = function(path)
 	local encoded = ""
@@ -40,6 +58,15 @@ M.setup = function(options)
 
 	M.opts.style = options.style or "modern"
 
+	if options.normalEditorMapping and options.normalEditorMapping ~= "NONE" then
+		vim.keymap.set({
+			mode = "n",
+			key = options.normalEditorMapping,
+			callback = M.MarkedBuffersOpen(true),
+			options = { noremap = true, silent = true }
+		})
+	end
+
 	if keybinding ~= "NONE" then
 		vim.api.nvim_set_keymap('n', keybinding, "",
 			{ noremap = true, silent = true, callback = function() M.BufferChadListBuffers() end })
@@ -53,28 +80,7 @@ M.setup = function(options)
 				noremap = true,
 				silent = true,
 				callback = function()
-					-- Check if marks file exists
-					local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
-
-					if mode == "marked" then
-						if vim.loop.fs_stat(marksFile) then
-							M.marked = {}
-							-- read the marks file and store it in M.marked
-							-- M.marked = vim.fn.readfile(marksFile)
-							-- read the marks file and store it in M.marked as array
-							local file = io.open(marksFile, "r")
-							for line in file:lines() do
-								if line ~= "" then
-									table.insert(M.marked, line)
-								end
-								-- table.insert(M.marked, line)
-							end
-							file:close()
-						end
-					end
-
-					M.OpenBufferWindow(M.marked, "Marked Buffers",
-						"marked")
+					M.MarkedBuffersOpen(false)
 				end
 			})
 	end
@@ -188,12 +194,12 @@ M.BufferChadListBuffers = function()
 	end
 
 
-	M.OpenBufferWindow(buffer_names, "Navigate to a Buffer", "buffer")
+	M.OpenBufferWindow(buffer_names, "Navigate to a Buffer", "buffer", false)
 end
 
-M.OpenBufferWindow = function(buffer_names, title, mode)
+M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
 	local dressingInstalled = pcall(require, 'dressing')
-	if dressingInstalled and M.opts.style == "modern" then
+	if (dressingInstalled and M.opts.style == "modern") and not normalEditor then
 		vim.ui.select(buffer_names, {
 			prompt = title,
 		}, function(selected)
@@ -201,8 +207,9 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 				vim.cmd('buffer ' .. selected)
 			end
 		end)
-	elseif M.opts.style == "default" or (not dressingInstalled and M.opts.style ~= "telescope") then
+	elseif (M.opts.style == "default" or (not dressingInstalled and M.opts.style ~= "telescope")) or normalEditor then
 		local bufnr = vim.api.nvim_create_buf(false, true)
+		-- print(bufnr)
 
 		-- Set the buffer contents to the list of buffer paths
 		vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, buffer_names)
@@ -222,6 +229,7 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 
 		vim.api.nvim_buf_call(bufnr, function()
 			vim.cmd('set modifiable')
+			vim.cmd('set number')
 			vim.cmd('set cursorline')
 		end)
 
@@ -239,14 +247,20 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 						vim.cmd('set modifiable')
 
 						if mode == "marked" then
-							-- get all text from the buffer and store it in a variable
-							local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+							local mybufnr = vim.fn.bufnr('%')
+							local buffer_content = vim.api.nvim_buf_get_lines(mybufnr, 0, -1, false)
+
+							local marksText = {}
+							for k, v in ipairs(buffer_content) do
+								-- print(k, v)
+								table.insert(marksText, v)
+							end
 
 							-- name of marks file is cwd with M.pathToFilename
 							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
 
 							-- write the buffer content to the marks filename
-							vim.fn.writefile(buffer_content, marksFile)
+							vim.fn.writefile(marksText, marksFile)
 						end
 					end)
 
@@ -267,14 +281,22 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 					vim.cmd('set modifiable')
 
 					if mode == "marked" then
+						local mybufnr = vim.fn.bufnr('%')
 						-- get all text from the buffer and store it in a variable
-						local buffer_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+						local buffer_content = vim.api.nvim_buf_get_lines(mybufnr, 0, -1, false)
+						-- print(buffer_content)
+						-- print all the lines in the buffer
+						local marksText = {}
+						for k, v in ipairs(buffer_content) do
+							-- print(k, v)
+							table.insert(marksText, v)
+						end
 
 						-- name of marks file is cwd with M.pathToFilename
 						local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
 
 						-- write the buffer content to the marks filename
-						vim.fn.writefile(buffer_content, marksFile)
+						vim.fn.writefile(marksText, marksFile)
 					end
 				end)
 
@@ -285,7 +307,7 @@ M.OpenBufferWindow = function(buffer_names, title, mode)
 		-- Store window ID and buffer number for later use
 		vim.api.nvim_buf_set_var(bufnr, 'buffer_list_win_id', win_id)
 	else
-		if pcall(require, 'telescope') then
+		if pcall(require, 'telescope') and not normalEditor then
 			local pickers = require "telescope.pickers"
 			local finders = require "telescope.finders"
 			local conf = require("telescope.config").values
@@ -321,17 +343,17 @@ M.push_current_buffer_to_marked = function()
 
 	-- get bufname ready by expanding home directory and replacing backslashes with forward slashes
 	bufname = bufname:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
-	-- print(bufname)
 	-- remove unnecessary paths from the mark name, like the current working directory
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 	-- remove cwdpath from bufname
-	-- bufname = bufname:gsub(cwdpath, "")
 	bufname = removePathFromFullPath(bufname, cwdpath)
 
 	-- Check if the buffer is not already in the list
 	if not vim.tbl_contains(M.marked, bufname) then
 		table.insert(M.marked, bufname)
 	end
+
+	vim.fn.writefile(M.marked, M.session_dir .. M.pathToFilename(vim.fn.getcwd()))
 end
 
 -- Function to push the buffer to the marked list at a specific position
@@ -352,7 +374,6 @@ M.push_buffer_to_marked = function(start_line, end_line, position)
 	-- subtract unnecessary paths from the mark name, like the current working directory
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 	-- remove cwdpath from bufname
-	-- bufname = bufname:gsub(cwdpath, "")
 	bufname = removePathFromFullPath(bufname, cwdpath)
 
 	-- Insert it at the specified position
@@ -368,8 +389,6 @@ M.navigate_to_marked_buffer = function(position)
 			print("No buffer found at position")
 		end
 	end
-
-	print(M.marked[position])
 end
 
 -- Define the key mappings with callbacks
@@ -433,6 +452,23 @@ for i = 1, 9 do
 		{ noremap = true, silent = true, callback = function() M.navigate_to_marked_buffer(i) end })
 	vim.api.nvim_set_keymap('x', string.format('%dnav', i), "",
 		{ noremap = true, silent = true, callback = function() M.navigate_to_marked_buffer(i) end })
+end
+
+
+M.nav_to_marked = function(n)
+	local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
+
+	if vim.fn.filereadable(marksFile) == 1 then
+		M.marked = {}
+		M.marked = vim.fn.readfile(marksFile)
+		for k, v in ipairs(M.marked) do
+			if v == "" then
+				table.remove(M.marked, k)
+			end
+		end
+
+		vim.cmd('buffer ' .. M.marked[n])
+	end
 end
 
 
