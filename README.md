@@ -66,6 +66,7 @@ Next, add the following lines to your `index.lua`:
 require("bufferchad").setup({
   mapping = "<leader>bb", -- Map any key, or set to NONE to disable key mapping
   mark_mapping = "<leader>bm", -- The keybinding to display just the marked buffers
+  add_mark_mapping = "mset", -- The keybinding to add a mark to a buffer
   order = "LAST_USED_UP", -- LAST_USED_UP (default)/ASCENDING/DESCENDING/REGULAR
   style = "default", -- default, modern (requires dressing.nvim and nui.nvim), telescope (requires telescope.nvim)
   close_mapping = "<Esc><Esc>", -- only for the default style window. 
@@ -93,7 +94,7 @@ The order parameter can have the following arguments:
 
 Now, BufferChad allows you to mark files like the `Harpoon` plugin. This let's you quickly switch between specific files instead of going through a list of all the buffers you have used till now.
 
-Use the `mset` keymap to mark the current file in the last position of the register, or `<1-9>set` to mark the current file the location of your choice. Then, to navigate, you can use either of the following options:
+Use the `add_mark_mapping` keymap or the function `require('bufferchad').mark_this_buffer()` to mark the current file in the last position of the register. Then, to navigate, you can use either of the following options:
 * `require("bufferchad").nav_to_marked(MARK_NUMBER)` (replace MARK_NUMBER with your mark number) to navigate to that mark.
 * Use your marks list using the `mark_mapping` or the `normal_editor_mapping` keybinding.
 
