@@ -403,8 +403,10 @@ function findMarkedBuffer(bufname)
 	return nil
 end
 
-vim.api.nvim_set_keymap('n', "mset", "",
+if options.add_mark_mapping ~= "NONE" then
+vim.api.nvim_set_keymap('n', options.add_mark_mapping or "mset", "",
 	{ noremap = true, silent = true, callback = function() M.push_current_buffer_to_marked() end })
+end
 
 -- Define the mappings for mdel
 vim.api.nvim_set_keymap('n', string.format('mdel', i), "",
@@ -471,6 +473,7 @@ M.nav_to_marked = function(n)
 	end
 end
 
+M.mark_this_buffer = function() M.push_current_buffer_to_marked() end
 
 
 
