@@ -471,6 +471,8 @@ M.nav_to_marked = function(n)
 			end
 		end
 
+		print("Navigating to buffer " .. M.marked[n])
+
 		vim.cmd('buffer ' .. M.marked[n])
 	end
 end
