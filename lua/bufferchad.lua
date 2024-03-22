@@ -93,39 +93,6 @@ M.setup = function(options)
 	end
 end
 
-
-
-M.navigate_to_buffer = function(bufname)
-	if bufname then
-		-- split the buffer name and the cursor position
-		local parts = vim.split(bufname, " ")
-
-		-- get the buffer name
-		bufname = parts[1]
-
-		-- get the cursor position
-		local cursor_position = parts[2]
-
-		-- split the cursor position into row and column
-		local cursor_parts = vim.split(cursor_position, ":")
-
-		-- get the row and column
-		local row = cursor_parts[1]
-		local column = cursor_parts[2]
-
-		-- open the buffer
-		vim.cmd('edit ' .. bufname)
-
-		-- move the cursor to the specified position
-		vim.fn.cursor(row, column)
-
-		-- vim.cmd('buffer ' .. bufname)
-		-- if position > #M.marked then
-		-- 	print("No buffer found at position")
-		-- end
-	end
-end
-
 function removePathFromFullPath(fullPath, pathToRemove)
 	-- Replace backslashes with forward slashes for platform independence
 	fullPath = fullPath:gsub("\\", "/")
@@ -244,11 +211,7 @@ M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
 			prompt = title,
 		}, function(selected)
 			if selected ~= "" and selected ~= nil and selected ~= '[No Name]' then
-				if mode == "marked" then
-					M.navigate_to_buffer(M.marked[selected])
-				else
-					vim.cmd('buffer ' .. selected)
-				end
+				vim.cmd('buffer ' .. selected)
 			end
 		end)
 	elseif (M.opts.style == "default" or (not dressingInstalled and M.opts.style ~= "telescope")) or normalEditor then
@@ -311,13 +274,7 @@ M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
 					vim.cmd('bdelete ' .. bufnr) -- Close the buffer list window
 					-- vim.cmd('edit ' .. selected_path)
 
-					if mode == "marked" then
-						M.navigate_to_buffer(M.marked[selected_path])
-					else
-						vim.cmd('buffer ' .. selected_path)
-					end
-
-					-- vim.cmd('buffer ' .. selected_path)
+					vim.cmd('buffer ' .. selected_path)
 				end
 			end
 		})
@@ -357,118 +314,22 @@ M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
 		-- Store window ID and buffer number for later use
 		vim.api.nvim_buf_set_var(bufnr, 'buffer_list_win_id', win_id)
 	else
-		-- if pcall(require, 'telescope') and not normalEditor then
-		-- 	local pickers = require "telescope.pickers"
-		-- 	local finders = require "telescope.finders"
-		-- 	local conf = require("telescope.config").values
+		if pcall(require, 'telescope') and not normalEditor then
+			local pickers = require "telescope.pickers"
+			local finders = require "telescope.finders"
+			local conf = require("telescope.config").values
 
-		-- 	pickers.new({}, {
-		-- 		prompt_title = title,
-		-- 		finder = finders.new_table {
-		-- 			results = buffer_names
-		-- 		},
-		-- 		sorter = conf.generic_sorter({}),
-		-- 		previewer = conf.grep_previewer({}),
-		-- 	}):find()
-		-- else
-		-- 	print("Telescope is not installed")
-		-- end
-
-		local pickers = require "telescope.pickers"
-		local finders = require "telescope.finders"
-		local conf = require("telescope.config").values
-		local actions = require "telescope.actions"
-
-		-- create a picker with the following keybindings:
-		-- <CR> to open the buffer
-		-- <Esc> to close the picker
-		-- <C-c> to close the picker
-		-- <C-j> to move the current buffer down in the list (in marked mode only)
-		-- <C-k> to move the current buffer up in the list (in marked mode only)
-		-- <C-d> to delete the current buffer from the list (in marked mode only)
-
-		pickers.new({}, {
-			prompt_title = title,
-			finder = finders.new_table {
-				results = buffer_names
-			},
-			sorter = conf.generic_sorter({}),
-			previewer = conf.grep_previewer({}),
-			keymap = {
-				n = {
-					["<CR>"] = function(prompt_bufnr)
-						local selection = require("telescope.actions.state").get_selected_entry(prompt_bufnr)
-						vim.api.nvim_win_close(prompt_bufnr, true)
-						if mode == "marked" then
-							M.navigate_to_buffer(M.marked[selection.ordinal])
-						else
-							vim.cmd('buffer ' .. selection.value)
-						end
-					end,
-					["<C-j>"] = function(prompt_bufnr)
-						require("telescope.actions").move_selection(prompt_bufnr, "j")
-					end,
-					["<C-k>"] = function(prompt_bufnr)
-						require("telescope.actions").move_selection(prompt_bufnr, "k")
-					end,
-					["<C-d>"] = function(prompt_bufnr)
-						local selection = require("telescope.actions.state").get_selected_entry(prompt_bufnr)
-						table.remove(buffer_names, selection.ordinal)
-						require("telescope.actions").close(prompt_bufnr)
-						M.OpenBufferWindow(buffer_names, title, mode, normalEditor)
-					end,
+			pickers.new({}, {
+				prompt_title = title,
+				finder = finders.new_table {
+					results = buffer_names
 				},
-				i = {
-					["<C-j>"] = function(prompt_bufnr)
-						require("telescope.actions").move_selection(prompt_bufnr, "j")
-						-- Save the current buffer list to the marks file
-						if mode == "marked" then
-							local mybufnr = vim.fn.bufnr('%')
-							local buffer_content = vim.api.nvim_buf_get_lines(mybufnr, 0, -1, false)
-							local marksText = {}
-							for k, v in ipairs(buffer_content) do
-								table.insert(marksText, v)
-							end
-							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
-							vim.fn.writefile(marksText, marksFile)
-						end
-					end,
-					["<C-k>"] = function(prompt_bufnr)
-						require("telescope.actions").move_selection(prompt_bufnr, "k")
-						-- Save the current buffer list to the marks file
-						if mode == "marked" then
-							local mybufnr = vim.fn.bufnr('%')
-							local buffer_content = vim.api.nvim_buf_get_lines(mybufnr, 0, -1, false)
-							local marksText = {}
-							for k, v in ipairs(buffer_content) do
-								table.insert(marksText, v)
-							end
-							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
-							vim.fn.writefile(marksText, marksFile)
-						end
-					end,
-					["<C-d>"] = function(prompt_bufnr)
-						local selection = require("telescope.actions.state").get_selected_entry(prompt_bufnr)
-						table.remove(buffer_names, selection.ordinal)
-						require("telescope.actions").close(prompt_bufnr)
-						M.OpenBufferWindow(buffer_names, title, mode, normalEditor)
-
-						-- Save the current buffer list to the marks file
-						if mode == "marked" then
-							local mybufnr = vim.fn.bufnr('%')
-							local buffer_content = vim.api.nvim_buf_get_lines(mybufnr, 0, -1, false)
-							local marksText = {}
-							for k, v in ipairs(buffer_content) do
-								table.insert(marksText, v)
-							end
-							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
-							vim.fn.writefile(marksText, marksFile)
-						end
-					end,
-				},
-			},
-		}):find()
-
+				sorter = conf.generic_sorter({}),
+				previewer = conf.grep_previewer({}),
+			}):find()
+		else
+			print("Telescope is not installed")
+		end
 	end
 end
 
@@ -493,9 +354,6 @@ M.push_current_buffer_to_marked = function()
 	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
 	-- remove cwdpath from bufname
 	bufname = removePathFromFullPath(bufname, cwdpath)
-
-	-- add cursor position as ROW:COLUMN with a space after the buffer name
-	bufname = bufname .. " " .. vim.fn.line('.') .. ":" .. vim.fn.col('.')
 
 	-- Check if the buffer is not already in the list
 	if not vim.tbl_contains(M.marked, bufname) then
@@ -532,8 +390,12 @@ end
 -- Function to navigate to the marked buffer by position
 M.navigate_to_marked_buffer = function(position)
 	local bufname = M.marked[position]
-
-	M.navigate_to_buffer(bufname)
+	if bufname then
+		vim.cmd('buffer ' .. bufname)
+		if position > #M.marked then
+			print("No buffer found at position")
+		end
+	end
 end
 
 -- Define the key mappings with callbacks
