@@ -377,6 +377,7 @@ M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
 		local pickers = require "telescope.pickers"
 		local finders = require "telescope.finders"
 		local conf = require("telescope.config").values
+		local actions = require "telescope.actions"
 
 		-- create a picker with the following keybindings:
 		-- <CR> to open the buffer
