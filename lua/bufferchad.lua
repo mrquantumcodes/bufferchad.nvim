@@ -473,7 +473,7 @@ M.nav_to_marked = function(n)
 
 		print("Navigating to buffer " .. M.marked[n])
 
-		vim.cmd('buffer ' .. M.marked[n])
+		vim.cmd('edit ' .. M.marked[n])
 	end
 end
 
