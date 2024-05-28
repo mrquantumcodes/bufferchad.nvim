@@ -274,7 +274,7 @@ M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
 					vim.cmd('bdelete ' .. bufnr) -- Close the buffer list window
 					-- vim.cmd('edit ' .. selected_path)
 
-					vim.cmd('buffer ' .. selected_path)
+					vim.cmd('edit ' .. selected_path)
 				end
 			end
 		})
