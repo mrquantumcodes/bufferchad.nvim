@@ -31,24 +31,63 @@ end
 
 
 M.pathToFilename = function(path)
+	isReading = isReading or "yes"
+	print(isReading)
+
 	local encoded = ""
-	for i = 1, #path do
-		encoded = encoded .. string.byte(path, i) .. "_"
+	encoded = path:gsub("\\", "/")
+	-- substitute colon as _Q_
+	encoded = encoded:gsub(":", "_Q_")
+	encoded = encoded:gsub("/", "_SL_")
+
+	-- if isReading is false return the encoded path
+	if isReading == "no" then
+		return encoded
+	else
+
+		if vim.fn.filereadable(session_dir .. "/" .. encoded .. ".vim") == 1 then
+			return encoded
+		else
+
+			local encoded = ""
+			for i = 1, #path do
+				encoded = encoded .. string.byte(path, i) .. "_"
+			end
+
+
+			return encoded
+
+		end
+
 	end
-	return encoded
 end
 
 -- Function to decode a reversible string back to a path
 M.filenameToPath = function(filename)
-	local decoded = ""
-	local parts = {}
-	for part in filename:gmatch("[^_]+") do
-		table.insert(parts, tonumber(part))
+	-- return decoded
+
+	decoded = filename
+	decoded = filename:gsub("_SL_", "/")
+	decoded = decoded:gsub("_Q_", ":")
+
+	local decodeCheck = decoded:gsub('.vim', '')
+
+	if vim.fn.isdirectory(decodeCheck) == 1 then
+		return decoded
+	else
+		local decoded = ""
+		local parts = {}
+		for part in filename:gmatch("[^_]+") do
+			table.insert(parts, tonumber(part))
+		end
+		for _, value in ipairs(parts) do
+			decoded = decoded .. string.char(value)
+		end
+
+		return decoded
+
 	end
-	for _, value in ipairs(parts) do
-		decoded = decoded .. string.char(value)
-	end
-	return decoded
+
 end
 
 M.setup = function(options)
@@ -264,7 +303,7 @@ M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
 							end
 
 							-- name of marks file is cwd with M.pathToFilename
-							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd())
+							local marksFile = M.session_dir .. M.pathToFilename(vim.fn.getcwd(), "no")
 
 							-- write the buffer content to the marks filename
 							vim.fn.writefile(marksText, marksFile)
