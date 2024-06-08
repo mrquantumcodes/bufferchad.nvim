@@ -45,7 +45,7 @@ M.pathToFilename = function(path)
 		return encoded
 	else
 
-		if vim.fn.filereadable(session_dir .. "/" .. encoded .. ".vim") == 1 then
+		if vim.fn.filereadable(session_dir .. "/" .. encoded) == 1 then
 			return encoded
 		else
 
