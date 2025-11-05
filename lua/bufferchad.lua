@@ -118,36 +118,46 @@ M.filenameToPath = function(filename)
 end
 
 M.setup = function(options)
-	M.opts = options
+	options = options or {}
 
-	local keybinding = options.mapping or "<Leader>bb"
+	-- Set defaults
+	M.opts = vim.tbl_extend("force", {
+		style = "fuzzy",
+		show_preview = true,
+		show_icons = true,
+		preview_lines = 10,
+		picker_width = 80,
+		picker_height = 20,
+		preview_width = 60,
+		mapping = "<Leader>bb",
+		mark_mapping = "<Leader>bm",
+		add_mark_mapping = "mset",
+		close_mapping = "<Esc><Esc>",
+		order = "LAST_USED_UP",
+	}, options)
 
-	M.opts.style = options.style or "default"
+	local keybinding = M.opts.mapping
 
-	if options.normal_editor_mapping and options.normal_editor_mapping ~= "NONE" then
-		vim.keymap.set("n", options.normal_editor_mapping, function()
+	if M.opts.normal_editor_mapping and M.opts.normal_editor_mapping ~= "NONE" then
+		vim.keymap.set("n", M.opts.normal_editor_mapping, function()
 			M.MarkedBuffersOpen(true)
 		end, { noremap = true, silent = true })
 	end
 
-	if keybinding ~= "NONE" then
+	if keybinding and keybinding ~= "NONE" then
 		vim.keymap.set('n', keybinding, function()
 			M.BufferChadListBuffers()
 		end, { noremap = true, silent = true })
 	end
 
-	local markerbinding = options.mark_mapping or "<Leader>bm"
-
-	if markerbinding ~= "NONE" then
-		vim.keymap.set('n', markerbinding, function()
+	if M.opts.mark_mapping and M.opts.mark_mapping ~= "NONE" then
+		vim.keymap.set('n', M.opts.mark_mapping, function()
 			M.MarkedBuffersOpen(false)
 		end, { noremap = true, silent = true })
 	end
 
-
-
-	if options.add_mark_mapping ~= "NONE" then
-		vim.keymap.set('n', options.add_mark_mapping or "mset", function()
+	if M.opts.add_mark_mapping and M.opts.add_mark_mapping ~= "NONE" then
+		vim.keymap.set('n', M.opts.add_mark_mapping, function()
 			M.push_current_buffer_to_marked()
 		end, { noremap = true, silent = true })
 	end
