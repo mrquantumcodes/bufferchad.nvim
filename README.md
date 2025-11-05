@@ -1,18 +1,42 @@
 # BufferChad
 
-An simple, customisable Buffer Manager for Neovim that `just works` out of the box
+**A blazing-fast, feature-rich buffer manager for Neovim that actually makes buffer management enjoyable.**
 
 ![App Screenshot](https://github.com/mrquantumcodes/bufferchad.nvim/blob/main/demo.gif)
 
-# *What's new?
-* Now, you no longer need to install `dressing.nvim` and `nui.nvim` like before, simply to use the plugin. If those plugins are not downloaded, buffers will be displayed using neovim's native window api and you can search buffers using the `slash (/)` key. If you do install Dressing and Nui, they will be automatically picked up and the Buffer Picker UI will change accordingly.
-* Also, you can now mark files like `Harpoon` to quickly navigate between them.
-* Telescope Integration
+## ✨ Why BufferChad?
 
-# *What's New-NEW?
-* Marked buffer list can now be edited like a normal buffer, just like Harpoon
-* Marked buffers now persist across sessions (or different working directories in general), just like Harpoon
-* There is a new, basic api to navigate to any marked buffer without opening the buffer list, just like Harpoon
+**Tired of "just use telescope" or "native buffers are enough"?** BufferChad combines the best of both worlds:
+
+- ⚡ **Faster than Telescope** - Zero startup overhead, native Lua fuzzy matching
+- 🎯 **Smarter than Native** - Intelligent fuzzy search with scoring, not just regex
+- 🎨 **Beautiful UI** - File icons, syntax-highlighted previews, and match highlights
+- 🚀 **Zero Dependencies** - Works out of the box, optional integrations available
+- 💪 **Harpoon-style Marks** - Quick navigation to your most important files
+- 🔧 **Actually Customizable** - Multiple UI styles, extensive configuration options
+- 📦 **Neovim 0.11+ Ready** - Built with modern APIs for 2025
+
+## 🔥 What's New in v2.0
+
+### Modern Fuzzy Finder Mode
+* **Lightning-fast fuzzy search** with intelligent scoring (sequential matches, camelCase, separators)
+* **Live file preview** with full syntax highlighting as you type
+* **Beautiful file icons** (optional, with nvim-web-devicons)
+* **Match highlighting** shows exactly what characters matched your query
+* **Zero dependencies** - pure Lua implementation
+* **Fully modular** - clean codebase with separate fuzzy, preview, and UI modules
+
+### Core Improvements
+* **Removed deprecated APIs** - Updated for Neovim 0.11+
+* **Performance optimizations** - Caching system for marked buffers
+* **Better buffer detection** - Uses native APIs instead of shell parsing
+* **Cleaner codebase** - Modular architecture makes it easy to extend
+
+### Harpoon-Style Features
+* Mark files like Harpoon for instant navigation
+* Persistent marks across sessions per working directory
+* Direct API for jumping to marked buffers without opening UI
+* Editable mark lists just like normal buffers
 
 ## Installation and setup
 
@@ -68,17 +92,50 @@ require("bufferchad").setup({
   mark_mapping = "<leader>bm", -- The keybinding to display just the marked buffers
   add_mark_mapping = "mset", -- The keybinding to add a mark to a buffer
   order = "LAST_USED_UP", -- LAST_USED_UP (default)/ASCENDING/DESCENDING/REGULAR
-  style = "default", -- default, modern (requires dressing.nvim and nui.nvim), telescope (requires telescope.nvim)
-  close_mapping = "<Esc><Esc>", -- only for the default style window. 
-  normal_editor_mapping = "NONE" -- read use case below
+  style = "fuzzy", -- default, fuzzy, telescope
+  close_mapping = "<Esc><Esc>", -- only for the default style window
+  normal_editor_mapping = "NONE", -- read use case below
+
+  -- Fuzzy style options (only apply when style = "fuzzy")
+  show_preview = true, -- Show file preview in fuzzy mode
+  show_icons = true, -- Show file icons (requires nvim-web-devicons)
+  preview_lines = 10, -- Number of lines to show in preview
+  picker_width = 80, -- Width of the fuzzy picker
+  picker_height = 20, -- Height of the fuzzy picker
+  preview_width = 60, -- Width of the preview window
 })
 ```
 
 ## Configuration options
 
+### Style Options
+
+BufferChad now supports **three different UI styles**:
+
+1. **`fuzzy`** (✨ **NEW & RECOMMENDED**) - Modern fuzzy finder with:
+   - ⚡ Lightning-fast fuzzy search with smart scoring
+   - 👀 Live preview with syntax highlighting
+   - 🎨 Beautiful file icons (with nvim-web-devicons)
+   - 🎯 Match highlighting showing exactly what matched
+   - ⌨️ Intuitive keybinds: `Ctrl-n/p` or arrow keys to navigate, `Enter` to select, `Esc` to close
+   - 🚀 Zero dependencies - works out of the box!
+
+2. **`default`** - Simple native Neovim window
+   - Uses built-in floating windows
+   - Search with `/` key
+   - Lightweight and fast
+
+3. **`telescope`** - Integration with telescope.nvim
+   - Requires telescope.nvim installed
+   - Familiar telescope interface
+
+### Key Mappings
+
 Change the mapping to anything you like, I recommend `<leader>bb` for listing all buffers and `<leader>bm` for listing marked buffers.
 
-*NOTE:* The `normal_editor_mapping` parameter, while optional, is required to be able to edit the indexes of marked buffers. If you want to change your marked buffers, such as reordering them, but you wanna use telescope or modern style for your core ui, then you need to use this parameter, because for now, only the normal style buffer list ui supports editing of it's contents.
+*NOTE:* The `normal_editor_mapping` parameter, while optional, is required to be able to edit the indexes of marked buffers. If you want to change your marked buffers, such as reordering them, but you wanna use telescope or fuzzy style for your core ui, then you need to use this parameter, because for now, only the default style buffer list ui supports editing of it's contents.
+
+### Buffer Order
 
 The order parameter can have the following arguments:
 

@@ -247,6 +247,33 @@ M.BufferChadListBuffers = function()
 end
 
 M.OpenBufferWindow = function(buffer_names, title, mode, normalEditor)
+	-- Check for fuzzy style (modern picker with preview)
+	if M.opts.style == "fuzzy" and not normalEditor then
+		local picker = require('bufferchad.picker')
+		picker.open(buffer_names, {
+			title = title,
+			show_preview = M.opts.show_preview ~= false,
+			show_icons = M.opts.show_icons ~= false,
+			preview_lines = M.opts.preview_lines or 10,
+			width = M.opts.picker_width or 80,
+			height = M.opts.picker_height or 20,
+			preview_width = M.opts.preview_width or 60,
+		}, function(selected)
+			if selected ~= "" and selected ~= nil then
+				-- Handle marked buffer saving if needed
+				if mode == "marked" then
+					local marksText = {}
+					for _, item in ipairs(buffer_names) do
+						table.insert(marksText, item)
+					end
+					save_marked_buffers(marksText)
+				end
+				vim.cmd('edit ' .. selected)
+			end
+		end)
+		return
+	end
+
 	-- Check for telescope style
 	if M.opts.style == "telescope" and not normalEditor then
 		if pcall(require, 'telescope') then
