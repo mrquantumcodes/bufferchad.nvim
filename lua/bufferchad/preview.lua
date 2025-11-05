@@ -101,6 +101,7 @@ function M.create_preview_window(config)
 	vim.api.nvim_win_set_option(preview_winid, 'cursorline', false)
 	vim.api.nvim_win_set_option(preview_winid, 'number', true)
 	vim.api.nvim_win_set_option(preview_winid, 'relativenumber', false)
+	vim.api.nvim_win_set_option(preview_winid, 'winhighlight', 'Normal:Normal,FloatBorder:BufferChadPreviewBorder,FloatTitle:BufferChadTitle')
 
 	return preview_bufnr, preview_winid
 end

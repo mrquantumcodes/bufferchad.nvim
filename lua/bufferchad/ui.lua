@@ -88,42 +88,49 @@ end
 
 -- Create custom highlight groups for BufferChad
 function M.setup_highlights()
-	-- Fuzzy match highlight
+	-- Fuzzy match highlight (bright orange, very visible)
 	vim.api.nvim_set_hl(0, 'BufferChadFuzzyMatch', {
 		fg = '#ff9e64',
 		bold = true,
 		default = true
 	})
 
-	-- Border highlight
+	-- Border highlight (blue)
 	vim.api.nvim_set_hl(0, 'BufferChadBorder', {
 		fg = '#7aa2f7',
 		default = true
 	})
 
-	-- Title highlight
+	-- Title highlight (cyan, bold)
 	vim.api.nvim_set_hl(0, 'BufferChadTitle', {
 		fg = '#7dcfff',
 		bold = true,
 		default = true
 	})
 
-	-- Prompt highlight
+	-- Prompt highlight (purple, bold)
 	vim.api.nvim_set_hl(0, 'BufferChadPrompt', {
 		fg = '#bb9af7',
 		bold = true,
 		default = true
 	})
 
-	-- Selection highlight
+	-- Selection highlight (darker blue background)
 	vim.api.nvim_set_hl(0, 'BufferChadSelection', {
 		bg = '#3b4261',
+		fg = '#c0caf5',
 		default = true
 	})
 
-	-- Preview border
+	-- Preview border (green)
 	vim.api.nvim_set_hl(0, 'BufferChadPreviewBorder', {
 		fg = '#9ece6a',
+		default = true
+	})
+
+	-- Results border (different from preview)
+	vim.api.nvim_set_hl(0, 'BufferChadResultsBorder', {
+		fg = '#f7768e',
 		default = true
 	})
 end
@@ -196,7 +203,7 @@ function M.create_results_window(config)
 	vim.api.nvim_win_set_option(results_winid, 'cursorline', true)
 	vim.api.nvim_win_set_option(results_winid, 'number', false)
 	vim.api.nvim_win_set_option(results_winid, 'relativenumber', false)
-	vim.api.nvim_win_set_option(results_winid, 'winhighlight', 'Normal:Normal,FloatBorder:BufferChadBorder,FloatTitle:BufferChadTitle,CursorLine:BufferChadSelection')
+	vim.api.nvim_win_set_option(results_winid, 'winhighlight', 'Normal:Normal,FloatBorder:BufferChadResultsBorder,FloatTitle:BufferChadTitle,CursorLine:BufferChadSelection')
 
 	return results_bufnr, results_winid
 end

@@ -121,8 +121,12 @@ local function select_item()
 	local selected_item = M.state.filtered_items[M.state.selected_index]
 
 	if selected_item and M.state.on_select then
+		-- Save callback before closing
+		local callback = M.state.on_select
+		local selected_text = selected_item.text
 		close_picker()
-		M.state.on_select(selected_item.text)
+		-- Call after closing to avoid errors
+		callback(selected_text)
 	end
 end
 
@@ -227,42 +231,46 @@ function M.open(items, opts, on_select)
 	-- Setup highlights
 	ui.setup_highlights()
 
-	-- Calculate window positions
-	local width = opts.width or 80
-	local height = opts.height or 20
-	local preview_width = opts.preview_width or 60
-
+	-- Calculate window positions for new layout
 	local editor_width = vim.o.columns
 	local editor_height = vim.o.lines
 
-	-- Center the main picker
-	local col = math.floor((editor_width - width) / 2)
-	local row = math.floor((editor_height - height) / 2)
+	-- Total width for the UI (80% of screen)
+	local total_width = math.floor(editor_width * 0.8)
+	local total_height = math.floor(editor_height * 0.7)
 
-	-- Create prompt window
+	-- Results list takes 35% of width, preview takes 65%
+	local results_width = math.floor(total_width * 0.35)
+	local preview_width = total_width - results_width - 2  -- -2 for spacing
+
+	-- Center everything
+	local start_col = math.floor((editor_width - total_width) / 2)
+	local start_row = math.floor((editor_height - total_height) / 2)
+
+	-- Create prompt window at the top (full width)
 	M.state.prompt_bufnr, M.state.prompt_winid = ui.create_prompt_window({
-		width = width,
-		row = row,
-		col = col,
+		width = total_width,
+		row = start_row,
+		col = start_col,
 		title = opts.title or ' Search ',
 	})
 
-	-- Create results window (below prompt)
+	-- Create results window (left side, below prompt)
 	M.state.results_bufnr, M.state.results_winid = ui.create_results_window({
-		width = width,
-		height = height - 3,
-		row = row + 3,
-		col = col,
+		width = results_width,
+		height = total_height - 3,
+		row = start_row + 3,
+		col = start_col,
 		title = ' Results ',
 	})
 
-	-- Create preview window (to the right) if enabled
+	-- Create preview window (right side, below prompt) if enabled
 	if opts.show_preview ~= false then
 		M.state.preview_bufnr, M.state.preview_winid = preview.create_preview_window({
 			width = preview_width,
-			height = height,
-			row = row,
-			col = col + width + 2,
+			height = total_height - 3,
+			row = start_row + 3,
+			col = start_col + results_width + 2,
 			title = ' Preview ',
 		})
 	end
