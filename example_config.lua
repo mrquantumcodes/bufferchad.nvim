@@ -8,6 +8,7 @@ require("bufferchad").setup({
   mapping = "<leader>bb",           -- Main buffer list keybinding
   mark_mapping = "<leader>bm",      -- Marked buffers keybinding
   add_mark_mapping = "mset",        -- Add current buffer to marks
+  switcher_mapping = "<C-Tab>",     -- VSCode-style buffer switcher (Ctrl+Tab)
   close_mapping = "<Esc><Esc>",     -- Close picker (default style only)
   normal_editor_mapping = "NONE",   -- Direct editor for marks (optional)
 
@@ -70,6 +71,13 @@ vim.keymap.set('n', '<leader>5', function() require('bufferchad').nav_to_marked(
 --   <C-p> or <Up>    - Previous item
 --   <CR>             - Select item
 --   <Esc> or <C-c>   - Close picker
+--
+-- VSCode-style switcher (Ctrl+Tab):
+--   <C-Tab>          - Open switcher (shows MRU buffers)
+--   <Tab>            - Cycle to next buffer (while holding Ctrl)
+--   <S-Tab>          - Cycle to previous buffer (while holding Ctrl)
+--   Release Ctrl     - Open selected buffer
+--   <Esc>            - Cancel
 --
 -- Marking system:
 --   mset             - Add current buffer to marks (default)

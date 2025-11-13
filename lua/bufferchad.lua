@@ -134,6 +134,7 @@ M.setup = function(options)
 		add_mark_mapping = "mset",
 		close_mapping = "<Esc><Esc>",
 		order = "LAST_USED_UP",
+		switcher_mapping = "<C-Tab>",  -- VSCode-style buffer switcher
 	}, options)
 
 	local keybinding = M.opts.mapping
@@ -159,6 +160,13 @@ M.setup = function(options)
 	if M.opts.add_mark_mapping and M.opts.add_mark_mapping ~= "NONE" then
 		vim.keymap.set('n', M.opts.add_mark_mapping, function()
 			M.push_current_buffer_to_marked()
+		end, { noremap = true, silent = true })
+	end
+
+	-- Setup VSCode-style buffer switcher
+	if M.opts.switcher_mapping and M.opts.switcher_mapping ~= "NONE" then
+		vim.keymap.set('n', M.opts.switcher_mapping, function()
+			M.BufferChadSwitcher()
 		end, { noremap = true, silent = true })
 	end
 end
@@ -547,6 +555,49 @@ end
 
 M.mark_this_buffer = function() M.push_current_buffer_to_marked() end
 
+-- VSCode-style Ctrl+Tab buffer switcher
+M.BufferChadSwitcher = function()
+	local sort_order = M.opts.order or "LAST_USED_UP"
+
+	-- Get all buffer info
+	local buffers = get_buffer_info()
+
+	-- Sort based on order preference
+	if sort_order == "LAST_USED_UP" or sort_order == "DESCENDING" or sort_order == "ASCENDING" then
+		table.sort(buffers, function(a, b)
+			return a.lastused > b.lastused
+		end)
+	end
+
+	-- For the switcher, we want MRU first (most recent at top)
+	-- So we DON'T swap for LAST_USED_UP like we do in the normal buffer list
+	if sort_order == "ASCENDING" then
+		local reversed = {}
+		for i = #buffers, 1, -1 do
+			table.insert(reversed, buffers[i])
+		end
+		buffers = reversed
+	end
+
+	-- Get current working directory
+	local cwdpath = vim.fn.getcwd():gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
+
+	-- Extract buffer names and make them relative to cwd
+	local buffer_names = {}
+	for _, buf in ipairs(buffers) do
+		local name = buf.name:gsub("%~", vim.fn.expand('$HOME')):gsub("\\", "/")
+		local relative_path = removePathFromFullPath(name, cwdpath)
+		table.insert(buffer_names, relative_path)
+	end
+
+	-- Open the switcher
+	local switcher = require('bufferchad.switcher')
+	switcher.open(buffer_names, {
+		show_preview = M.opts.show_preview ~= false,
+		show_icons = M.opts.show_icons ~= false,
+		preview_lines = M.opts.preview_lines or 10,
+	})
+end
 
 
 -- Set the keybinding to toggle the buffer list window

@@ -26,6 +26,12 @@
 * **Zero dependencies** - pure Lua implementation
 * **Fully modular** - clean codebase with separate fuzzy, preview, and UI modules
 
+### VSCode-Style Buffer Switcher
+* **Ctrl+Tab cycling** just like VSCode/IntelliJ (configurable to any key combo)
+* **Hold-and-cycle** - keep pressing Tab while holding Ctrl to cycle through buffers
+* **Release to select** - automatically opens buffer when you release the modifier key
+* **Simple, fast UI** - no search needed, just quick switching
+
 ### Core Improvements
 * **Removed deprecated APIs** - Updated for Neovim 0.11+
 * **Performance optimizations** - Caching system for marked buffers
