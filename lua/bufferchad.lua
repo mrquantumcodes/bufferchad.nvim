@@ -198,10 +198,12 @@ local function get_buffer_info()
 	local all_bufs = vim.api.nvim_list_bufs()
 
 	for _, bufnr in ipairs(all_bufs) do
-		if vim.api.nvim_buf_is_loaded(bufnr) then
+		-- Check if buffer is valid and listed (not if it's loaded)
+		-- This allows session-restored buffers to show up
+		if vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted then
 			local name = vim.api.nvim_buf_get_name(bufnr)
 			-- Skip unnamed buffers and special buffers
-			if name ~= "" and vim.bo[bufnr].buflisted then
+			if name ~= "" then
 				local lastused = vim.fn.getbufinfo(bufnr)[1].lastused
 				table.insert(buffers, {
 					bufnr = bufnr,
